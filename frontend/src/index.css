@@ -1,0 +1,17 @@
+/* 1. The new Tailwind v4 import */
+@import "tailwindcss";
+
+/* 2. Tell Tailwind to use our 'dark' class instead of the OS system preference */
+@variant dark (&:where(.dark, .dark *));
+
+/* 3. Your custom body styling (Optional, but keeps the background clean!) */
+body {
+  background-color: #f9fafb; /* Light mode default (gray-50) */
+  color: #1f2937; /* Light mode text (gray-800) */
+}
+
+/* Base dark mode body styling */
+.dark body {
+  background-color: #1e1e1e; /* That softer dark gray you asked for! */
+  color: #d1d5db; /* Light gray text */
+}
