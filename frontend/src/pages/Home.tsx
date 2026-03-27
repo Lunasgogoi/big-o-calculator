@@ -17,6 +17,7 @@ interface AnalysisResult {
 export default function Home() {
   const [code, setCode] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [language, setLanguage] = useState('python');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +31,7 @@ export default function Home() {
       const response = await fetch('http://localhost:8000/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code, language: 'python' }), 
+        body: JSON.stringify({ code: code, language: language }), // <-- Sends the dynamic language!
       });
 
       if (!response.ok) throw new Error('Network response was not ok');
@@ -55,15 +56,27 @@ export default function Home() {
 
       <div className="bg-white dark:bg-[#161616] rounded-xl border border-gray-300 dark:border-gray-800 p-4 mb-6 shadow-xl dark:shadow-2xl transition-colors duration-300">
         <div className="flex justify-between items-center mb-4 text-xs text-gray-500 border-b border-gray-200 dark:border-gray-800 pb-3">
-          <div className="flex space-x-2">
-            <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-            <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700"></div>
-            <div className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+          <div className="flex space-x-2 items-center">
+            <div className="w-3 h-3 rounded-full bg-red-400 dark:bg-gray-700"></div>
+            <div className="w-3 h-3 rounded-full bg-amber-400 dark:bg-gray-700"></div>
+            <div className="w-3 h-3 rounded-full bg-green-400 dark:bg-gray-700"></div>
+            
+            {/* The New Language Dropdown! */}
+            <select 
+              value={language} 
+              onChange={(e) => setLanguage(e.target.value)}
+              className="ml-4 bg-transparent border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-gray-700 dark:text-gray-300 focus:outline-none focus:border-teal-500"
+            >
+              <option value="python">Python</option>
+              <option value="cpp">C++</option>
+              <option value="c">C</option>
+            </select>
           </div>
-          <div className="font-mono tracking-widest text-gray-400">main.py</div>
           <div>{code.length} / 1,500</div>
         </div>
-        <CodeEditor code={code} setCode={setCode} language="python" />
+        
+        {/* Pass the dynamic language down to PrismJS! */}
+        <CodeEditor code={code} setCode={setCode} language={language} />
       </div>
 
       <button 
