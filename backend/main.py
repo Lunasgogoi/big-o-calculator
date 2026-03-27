@@ -3,9 +3,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-# Import our custom parser and rule engine!
 from core.parser import code_parser
 from rules.base_loops import analyze_base_loops
+from rules.sorting_search import analyze_sorting_search
+
+# 1. Import our new AI client!
+from core.ai_client import get_ai_suggestion
 
 app = FastAPI(title="Big O Analyzer API")
 
@@ -23,29 +26,38 @@ class CodeSubmission(BaseModel):
 
 @app.post("/api/analyze")
 async def analyze_code(submission: CodeSubmission):
-    # 1. Check if the code is empty
     if not submission.code.strip():
         raise HTTPException(status_code=400, detail="No code provided")
 
     try:
-        # 2. Parse the code into an AST
         root_node = code_parser.parse_code(submission.code, submission.language)
         
-        # 3. Pass the AST to our rule engine (currently just checking loop depth)
-        rule_results = analyze_base_loops(root_node)
+        # Step 2: Run the static rule engine (Smartest rules first!)
         
-        # 4. Construct the final response for the React frontend
+        # Try to detect complex algorithms first
+        rule_results = analyze_sorting_search(root_node, submission.code)
+        
+        # If it wasn't a complex algorithm, fall back to basic loop counting
+        if rule_results is None:
+            rule_results = analyze_base_loops(root_node)
+            
+        
+        # Step 3: Call Gemini AI to get a smart suggestion!
+        ai_text = get_ai_suggestion(
+            code=submission.code,
+            time_complexity=rule_results["time_complexity"],
+            space_complexity=rule_results["space_complexity"]
+        )
+        
         return {
             "status": "success",
             "time_complexity": rule_results["time_complexity"],
             "space_complexity": rule_results["space_complexity"],
             "analysis_steps": rule_results["analysis_steps"],
-            # We will wire up the real AI next!
-            "ai_suggestion": f"The rule engine calculated {rule_results['time_complexity']}. Next, we will ask the AI how to improve this!"
+            "ai_suggestion": ai_text
         }
         
     except Exception as e:
-        # If something goes wrong during parsing, tell the frontend
         raise HTTPException(status_code=500, detail=f"Error analyzing code: {str(e)}")
 
 @app.get("/")
