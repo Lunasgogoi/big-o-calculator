@@ -12,12 +12,18 @@ import 'prismjs/themes/prism-tomorrow.css';
 // 🐛 THE FIX: Safely extract the component for Vite
 const Editor = (EditorComponent as any).default || EditorComponent;
 
-export default function CodeEditor({ code, setCode, language = 'python' }: any) {
+export default function CodeEditor({ code, setCode, language  }: any) {
   
   const highlightCode = (code: string) => {
     const grammar = Prism.languages[language] || Prism.languages.javascript;
     return Prism.highlight(code, grammar, language);
   };
+
+  const placeholderText = `# Paste your code here
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)`;
 
   return (
     <div className="w-full bg-transparent font-mono text-sm relative">
@@ -25,11 +31,14 @@ export default function CodeEditor({ code, setCode, language = 'python' }: any) 
         value={code}
         onValueChange={(code: any) => setCode(code)}
         highlight={highlightCode}
-        padding={10}
+        padding={14}
+
+        placeholder={placeholderText}
+        
         style={{
           fontFamily: '"Fira Code", "JetBrains Mono", Consolas, monospace',
           fontSize: 14,
-          minHeight: '200px',
+          minHeight: '250px',
           backgroundColor: 'transparent',
         }}
         textareaClassName="focus:outline-none"

@@ -5,6 +5,7 @@ import ComplexityCard from '../components/ComplexityCard';
 import CodeExample from '../components/CodeExample';
 import ResultPanel from '../components/ResultPanel';
 import CodeEditor from '../components/CodeEditor';
+//import { useEffect } from 'react';
 
 interface AnalysisResult {
   status: string;
@@ -14,10 +15,11 @@ interface AnalysisResult {
   ai_suggestion: string;
 }
 
-export default function Home() {
-  const [code, setCode] = useState('');
+export default function Home({code, setCode,language,setLanguage}: any) {
+ 
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [language, setLanguage] = useState('python');
+
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,11 +46,12 @@ export default function Home() {
     }
   };
 
+
   return (
     <>
       {/* --- HERO & EDITOR SECTION --- */}
       <header className="mb-10">
-        <h1 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 dark:text-white mb-4">Big O Calc</h1>
+        <h1 className="text-4xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">Big O Calc</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
           Calculate the time and space complexity of your code using Big O notation.
         </p>
@@ -62,14 +65,15 @@ export default function Home() {
             <div className="w-3 h-3 rounded-full bg-green-400 dark:bg-gray-700"></div>
             
             {/* The New Language Dropdown! */}
+            {/* The Beautifully Styled Language Dropdown */}
             <select 
               value={language} 
               onChange={(e) => setLanguage(e.target.value)}
-              className="ml-4 bg-transparent border border-gray-300 dark:border-gray-700 rounded px-2 py-1 text-gray-700 dark:text-gray-300 focus:outline-none focus:border-teal-500"
+              className="ml-4 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all cursor-pointer"
             >
-              <option value="python">Python</option>
-              <option value="cpp">C++</option>
-              <option value="c">C</option>
+              <option value="python" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">Python</option>
+              <option value="cpp" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C++</option>
+              <option value="c" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C</option>
             </select>
           </div>
           <div>{code.length} / 1,500</div>

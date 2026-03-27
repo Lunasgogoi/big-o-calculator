@@ -7,12 +7,23 @@ import Navbar from './components/Navbar';
 import AppRoutes from './routes/AppRoutes';
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // 1. Initialize state by checking localStorage FIRST
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    return savedTheme === 'dark'; // Returns true if 'dark' was saved, false otherwise
+  });
 
-  // Apply dark mode to HTML tag
+  const [code, setCode] = useState('');
+  const [language,setlanguage]= useState('python');
+  // 2. Apply dark mode AND save it to localStorage whenever it changes
   useEffect(() => {
-    if (isDarkMode) document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark'); // Save preference
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light'); // Save preference
+    }
   }, [isDarkMode]);
 
   return (
@@ -20,11 +31,11 @@ export default function App() {
       <div className="min-h-screen transition-colors duration-300 bg-white dark:bg-[#1e1e1e] text-gray-800 dark:text-gray-300 font-sans flex flex-col items-center px-4 pb-20">
         
         {/* The Navbar stays at the top of EVERY page */}
-        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCode={setCode} setLanguage={setlanguage} language={language} />
 
         {/* Our routing logic is now safely tucked away in its own file! */}
         <main className="w-full max-w-4xl flex-grow">
-          <AppRoutes />
+          <AppRoutes setCode={setCode} code={code} language={language} setLanguage={setlanguage} />
         </main>
         
         {/* The Footer stays at the bottom of EVERY page */}
