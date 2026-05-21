@@ -5,6 +5,8 @@ import ComplexityCard from '../components/ComplexityCard';
 import CodeExample from '../components/CodeExample';
 import ResultPanel from '../components/ResultPanel';
 import CodeEditor from '../components/CodeEditor';
+import toast from 'react-hot-toast'
+
 //import { useEffect } from 'react';
 
 interface AnalysisResult {
@@ -21,12 +23,16 @@ export default function Home({code, setCode,language,setLanguage}: any) {
 
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   const handleCalculate = async () => {
-    if (!code.trim()) return;
+    if (!code.trim()) {
+      toast.error('Please enter some code to analyze.');
+      return;
+    } 
+  
     setIsLoading(true);
-    setError(null);
+
     setResult(null);
 
     try {
@@ -36,11 +42,22 @@ export default function Home({code, setCode,language,setLanguage}: any) {
         body: JSON.stringify({ code: code, language: language }), // <-- Sends the dynamic language!
       });
 
-      if (!response.ok) throw new Error('Network response was not ok');
-      const data: AnalysisResult = await response.json();
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 429) { // Too Many Requests(rate limit) || 500 server error
+          throw new Error("API rate limit exceeded. Please wait a moment and try again.");
+        }
+
+        throw new Error(data.detail || "Failed to analyze code.");
+      }
+
       setResult(data); 
-    } catch (err) {
-      setError("Failed to connect to the backend. Is FastAPI running on port 8000?");
+      toast.success("Analysis complete!");
+
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "An unexpected error occurred. Is the server running?");
     } finally {
       setIsLoading(false);
     }
@@ -88,10 +105,10 @@ export default function Home({code, setCode,language,setLanguage}: any) {
         disabled={isLoading}
         className="bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-medium py-2.5 px-6 rounded-lg transition duration-200 mb-8 shadow-md cursor-pointer"
       >
-        {isLoading ? 'Analyzing AST...' : 'Calculate'}
+        {isLoading ? 'Analyzing Code...' : 'Calculate'}
       </button>
 
-      {error && <div className="text-red-600 dark:text-red-400 mb-8 p-4 border border-red-300 dark:border-red-900 rounded-lg bg-red-50 dark:bg-red-950/30">{error}</div>}
+      {/* {error && <div className="text-red-600 dark:text-red-400 mb-8 p-4 border border-red-300 dark:border-red-900 rounded-lg bg-red-50 dark:bg-red-950/30">{error}</div>} */}
       
       {result ? <ResultPanel result={result} /> : (
         <div className="border border-dashed border-gray-300 dark:border-gray-800 rounded-xl p-8 text-center text-gray-600 dark:text-gray-500 bg-gray-100 dark:bg-[#0f0f0f] mb-20 transition-colors duration-300">
@@ -102,6 +119,20 @@ export default function Home({code, setCode,language,setLanguage}: any) {
       {/* --- INFORMATIONAL CONTENT (Landing Page Overview) --- */}
       <div className="space-y-20 max-w-3xl text-left">
         
+        <section className="mb-16 mt-16 max-w-3xl text-left">
+        <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">How to Use This Tool</h2>
+        <ol className="list-decimal list-outside space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed pl-5 mb-8">
+          <li><strong>Paste your code</strong> into the editor above. Supports JavaScript, Python, Java, C++, and more.</li>
+          <li><strong>Click Calculate</strong> to analyze the time and space complexity using Big O notation.</li>
+          <li><strong>Review the result</strong> — you'll get a step-by-step breakdown of how the complexity was determined.</li>
+        </ol>
+        
+        {/* Styling the Tip box with muted colors and subtle border */}
+        <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
+          <strong>Tip:</strong> Keep your code under 1,500 characters for best results. Focus on the core algorithm rather than boilerplate code.
+        </div>
+      </section>
+
         {/* Common Complexity Classes */}
         <section>
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">Common Complexity Classes</h2>

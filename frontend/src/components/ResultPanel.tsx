@@ -22,7 +22,7 @@ export default function ResultPanel({ result }: any) {
       </div>
 
       {/* Engine Analysis Steps (New!) */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">How we calculated this:</h4>
         <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
           {result.analysis_steps.map((step: string, index: number) => (
@@ -32,11 +32,11 @@ export default function ResultPanel({ result }: any) {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
 
       {/* AI Suggestion Box */}
       <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
-        <span className="text-teal-600 dark:text-teal-500 font-bold mr-2">✨ AI Suggestion:</span>
+        <span className="text-teal-600 dark:text-teal-500 font-bold mr-2">AI Overview:</span>
         <span className="text-gray-700 dark:text-gray-300 leading-relaxed">
           {result.ai_suggestion}
         </span>

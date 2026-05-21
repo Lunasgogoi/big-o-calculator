@@ -57,5 +57,4 @@ def analyze_base_loops(root_node):
     return {
         "time_complexity": time_complexity,
         "space_complexity": "O(1)", # We will build space complexity logic later!
-        "analysis_steps": steps
     }

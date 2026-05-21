@@ -30,21 +30,28 @@ def get_allocation_depth(node, code_bytes):
 
 def analyze_space_complexity(root_node, raw_code, current_space_guess):
     """
-    Analyzes the AST to determine space complexity for ANY depth: O(1), O(n), O(n^2), O(n^3), etc.
+    Analyzes the AST to determine space complexity. 
+    It will upgrade O(1) based on allocations, but it will NEVER downgrade 
+    a guess that was already flagged as O(n) by a smarter rule.
     """
-    # If a previous rule (like Merge Sort) already knows the exact space, trust it.
-    if current_space_guess not in ["O(1)", "O(n)"]: 
-        return current_space_guess
-        
     code_bytes = bytes(raw_code, "utf8")
-    
-    # Calculate how deeply nested our memory allocations are
     depth = get_allocation_depth(root_node, code_bytes)
     
-    # Dynamically generate the Big O notation based on the actual depth!
-    if depth == 0:
-        return "O(1)"
-    elif depth == 1:
+    # 1. If the baseline is O(1), let the allocation depth dictate the final space
+    if current_space_guess == "O(1)":
+        if depth == 0:
+            return "O(1)"
+        elif depth == 1:
+            return "O(n)"
+        else:
+            return f"O(n^{depth})"
+            
+    # 2. If a smart rule (like DP or Recursion) already flagged it as O(n),
+    # we NEVER downgrade it to O(1). We only upgrade it if depth >= 2.
+    if current_space_guess == "O(n)":
+        if depth >= 2:
+            return f"O(n^{depth})"
         return "O(n)"
-    else:
-        return f"O(n^{depth})"
+        
+    # 3. If it's already a complex space guess, just trust the smart rule
+    return current_space_guess

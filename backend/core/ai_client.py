@@ -19,18 +19,14 @@ def get_ai_suggestion(code: str, time_complexity: str, space_complexity: str) ->
         return "AI suggestions are disabled. Please add a GEMINI_API_KEY to your .env file."
 
     # This is the "Prompt Engineering" part!
-    prompt = f"""
-    You are an expert, encouraging computer science tutor. 
-    A student submitted the following code:
-    
-    ```
-    {code}
-    ```
-    
-    Our static analysis engine calculated its time complexity as {time_complexity} and space complexity as {space_complexity}.
-    
-    In 2 to 3 short sentences, explain WHY it has this complexity, and suggest ONE way to optimize it (if an optimization exists). Keep it beginner-friendly, concise, and do not use markdown formatting in your response.
-    """
+    prompt = f"""You are an expert technical interviewer and systems analyzer.
+                The provided code has an analyzed Time Complexity of {time_complexity} and Space Complexity of {space_complexity}. 
+
+                In 2 to 3 concise sentences, provide a direct, highly technical explanation of WHY these complexities are accurate based on the code's loops, recursive calls, or memory allocations. Explicitly name the algorithm or structural pattern if it is a well-known paradigm (e.g., Monotonic Stack, Bottom-Up DP, Floyd's Cycle Detection). Only suggest an optimization if a mathematically more efficient approach exists. Do strictly avoid all markdown formatting in your response.
+
+                Code snippet:
+                {code}
+            """
     
     try:
         # The new v2 SDK syntax for generating content!

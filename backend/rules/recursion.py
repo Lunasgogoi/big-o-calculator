@@ -57,24 +57,14 @@ def analyze_recursion(root_node, raw_code):
                     return {
                         "time_complexity": "O(n log n)",
                         "space_complexity": "O(n)",
-                        "analysis_steps": [
-                            "Parsed source code into an Abstract Syntax Tree (AST).",
-                            f"Detected recursive function '{func_name}'.",
-                            "Found array slicing/division combined with multiple recursive calls.",
-                            "Identified 'Divide and Conquer' pattern (e.g., Merge Sort)."
-                        ]
+                        
                     }
                 # Otherwise, multiple branching recursive calls usually means Exponential time
                 else:
                     return {
                         "time_complexity": "O(2^n)",
                         "space_complexity": "O(n)",
-                        "analysis_steps": [
-                            "Parsed source code into an Abstract Syntax Tree (AST).",
-                            f"Detected recursive function '{func_name}'.",
-                            "Found multiple branching recursive calls without memoization.",
-                            "Identified exponential branching pattern."
-                        ]
+                        
                     }
     
     return None

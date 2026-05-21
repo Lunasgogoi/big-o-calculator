@@ -8,6 +8,14 @@ from rules.base_loops import analyze_base_loops
 from rules.sorting_search import analyze_sorting_search
 from rules.recursion import analyze_recursion 
 from rules.space_complexity import analyze_space_complexity
+from rules.sliding_window import analyze_sliding_window
+from rules.dynamic_programming import analyze_dp
+from rules.tabulation import analyze_tabulation
+from rules.graph_traversal import analyze_graph_traversal
+from rules.binary_trees import analyze_binary_tree
+from rules.heap import analyze_heap
+from rules.linked_list import analyze_linked_list
+from rules.monotonic_stack import analyze_monotonic_stack
 
 # 1. Import our new AI client!
 from core.ai_client import get_ai_suggestion
@@ -38,10 +46,37 @@ async def analyze_code(submission: CodeSubmission):
         rule_results = analyze_sorting_search(root_node, submission.code)
         
         if rule_results is None:
+            rule_results = analyze_linked_list(root_node, submission.code)
+        
+        if rule_results is None:
+            rule_results = analyze_binary_tree(root_node, submission.code) 
+        
+        
+        if rule_results is None:
+            rule_results = analyze_graph_traversal(root_node, submission.code)
+
+        if rule_results is None:
+            rule_results = analyze_dp(root_node, submission.code)
+            
+        if rule_results is None:
+            rule_results = analyze_tabulation(root_node, submission.code)
+        
+        if rule_results is None:
             rule_results = analyze_recursion(root_node, submission.code)
             
         if rule_results is None:
+            rule_results = analyze_sliding_window(root_node, submission.code)
+            
+        if rule_results is None:
+            rule_results = analyze_monotonic_stack(root_node, submission.code)    
+        
+        if rule_results is None:
+            rule_results = analyze_heap(root_node, submission.code)
+            
+        if rule_results is None:
             rule_results = analyze_base_loops(root_node)
+            
+            
             
         # Step 2: SPACE COMPLEXITY ENGINE
         # Run our new space analyzer to double-check memory usage
@@ -62,7 +97,7 @@ async def analyze_code(submission: CodeSubmission):
             "status": "success",
             "time_complexity": rule_results["time_complexity"],
             "space_complexity": calculated_space, # Use the new calculated space!
-            "analysis_steps": rule_results["analysis_steps"] + [f"Analyzed AST for memory allocation: Space complexity is {calculated_space}."],
+            #"analysis_steps": rule_results["analysis_steps"] + [f"Analyzed AST for memory allocation: Space complexity is {calculated_space}."],
             "ai_suggestion": ai_text
         }
         

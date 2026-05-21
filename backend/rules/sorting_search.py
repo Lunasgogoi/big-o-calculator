@@ -31,12 +31,7 @@ def analyze_sorting_search(root_node, raw_code):
         return {
             "time_complexity": "O(log n)",
             "space_complexity": "O(1)",
-            "analysis_steps": [
-                "Parsed source code into an Abstract Syntax Tree (AST).",
-                "Detected a 'while' loop construct.",
-                "Found a division by 2 operation inside the loop.",
-                "Identified the classic 'Binary Search' pattern (halving the search space)."
-            ]
+            
         }
         
     # If it doesn't match anything here, return None so main.py knows to keep trying

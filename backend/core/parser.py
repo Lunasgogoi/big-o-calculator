@@ -21,10 +21,11 @@ class CodeParser:
 
     def parse_code(self, code: str, language: str = "python"):
         """Parses the code into an AST based on the selected language."""
+        
         # Fall back to Python if the language isn't found
         lang = self.languages.get(language.lower(), PY_LANGUAGE)
         
-        # 🚨 THE FIX: New syntax for Tree-sitter v0.22+ 🚨
+        
         # We now pass the language directly when creating the Parser!
         parser = Parser(lang)
         
