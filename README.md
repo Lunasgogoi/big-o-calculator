@@ -73,7 +73,7 @@ Start the FastAPI server:
 uvicorn main:app --reload
 ```
 
-3.3. Frontend Setup (React + Tailwind)
+3. Frontend Setup (React + Tailwind)
 Open a new terminal window.
 
 ```
