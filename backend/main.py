@@ -1,23 +1,24 @@
-# backend/main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from core.parser import code_parser
-from rules.base_loops import analyze_base_loops
-from rules.sorting_search import analyze_sorting_search
-from rules.recursion import analyze_recursion 
-from rules.space_complexity import analyze_space_complexity
-from rules.sliding_window import analyze_sliding_window
-from rules.dynamic_programming import analyze_dp
-from rules.tabulation import analyze_tabulation
-from rules.graph_traversal import analyze_graph_traversal
-from rules.binary_trees import analyze_binary_tree
-from rules.heap import analyze_heap
-from rules.linked_list import analyze_linked_list
-from rules.monotonic_stack import analyze_monotonic_stack
+from core import parser as code_parser
+from rules.python.logarithmic import analyze_logarithmic as py_logarithmic
+from rules.python.base_loops import analyze_base_loops
+from rules.python.sorting_search import analyze_sorting_search
+from rules.python.recursion import analyze_recursion 
+from rules.python.space_complexity import analyze_space_complexity
+from rules.python.sliding_window import analyze_sliding_window
+from rules.python.dynamic_programming import analyze_dp
+from rules.python.tabulation import analyze_tabulation
+from rules.python.binary_trees import analyze_binary_tree
+from rules.python.heap import analyze_heap
+from rules.python.linked_list import analyze_linked_list
+from rules.python.monotonic_stack import analyze_monotonic_stack
+from rules.python.built_in_sort import analyze_sort_search
 
-# 1. Import our new AI client!
+import rules.python.graph_traversal as py_graph
+
 from core.ai_client import get_ai_suggestion
 
 app = FastAPI(title="Big O Analyzer API")
@@ -34,6 +35,28 @@ class CodeSubmission(BaseModel):
     code: str
     language: str = "python" 
 
+# 🚨 THE RANKING SYSTEM: Determines which Big O is the heaviest
+COMPLEXITY_RANKS = {
+    "O(1)": 1,
+    "O(log n)": 2,
+    "O(n)": 3,
+    "O(V + E)": 3,
+    "O(n log n)": 4,
+    "O(n^2)": 5,
+    "O(n^3)": 6,
+    "O(2^n)": 7
+}
+
+def get_dominant_result(results: list):
+    """Filters out None values and returns the rule result with the highest time complexity."""
+    valid_results = [r for r in results if r is not None and r["time_complexity"] in COMPLEXITY_RANKS]
+    
+    if not valid_results:
+        return {"time_complexity": "O(1)", "space_complexity": "O(1)"}
+        
+    # Sort the dictionary objects based on their time_complexity rank
+    return max(valid_results, key=lambda x: COMPLEXITY_RANKS[x["time_complexity"]])
+
 @app.post("/api/analyze")
 async def analyze_code(submission: CodeSubmission):
     if not submission.code.strip():
@@ -41,45 +64,34 @@ async def analyze_code(submission: CodeSubmission):
 
     try:
         root_node = code_parser.parse_code(submission.code, submission.language)
+        rule_results = None
         
-        # Step 1: TIME COMPLEXITY ENGINE
-        rule_results = analyze_sorting_search(root_node, submission.code)
-        
-        if rule_results is None:
-            rule_results = analyze_linked_list(root_node, submission.code)
-        
-        if rule_results is None:
-            rule_results = analyze_binary_tree(root_node, submission.code) 
-        
-        
-        if rule_results is None:
-            rule_results = analyze_graph_traversal(root_node, submission.code)
-
-        if rule_results is None:
-            rule_results = analyze_dp(root_node, submission.code)
+        # Traffic Director
+        if submission.language == "cpp":
+            # Run C++ Pipeline (To be implemented)
+            rule_results = {"time_complexity": "O(1)", "space_complexity": "O(1)"} 
+        else:
+            # 🚨 THE NEW PYTHON PIPELINE: Collect ALL results!
+            found_results = []
             
-        if rule_results is None:
-            rule_results = analyze_tabulation(root_node, submission.code)
-        
-        if rule_results is None:
-            rule_results = analyze_recursion(root_node, submission.code)
+            found_results.append(py_graph.analyze_graph_traversal(root_node, submission.code))
+            found_results.append(analyze_sorting_search(root_node, submission.code))
+            found_results.append(analyze_sort_search(root_node, submission.code))
+            found_results.append(analyze_linked_list(root_node, submission.code))
+            found_results.append(analyze_binary_tree(root_node, submission.code))
+            found_results.append(analyze_dp(root_node, submission.code))
+            found_results.append(analyze_tabulation(root_node, submission.code))
+            found_results.append(analyze_recursion(root_node, submission.code))
+            found_results.append(analyze_sliding_window(root_node, submission.code))
+            found_results.append(analyze_monotonic_stack(root_node, submission.code))
+            found_results.append(analyze_heap(root_node, submission.code))
+            found_results.append(py_logarithmic(root_node, submission.code))
+            found_results.append(analyze_base_loops(root_node)) # The fallback loop counter
             
-        if rule_results is None:
-            rule_results = analyze_sliding_window(root_node, submission.code)
-            
-        if rule_results is None:
-            rule_results = analyze_monotonic_stack(root_node, submission.code)    
-        
-        if rule_results is None:
-            rule_results = analyze_heap(root_node, submission.code)
-            
-        if rule_results is None:
-            rule_results = analyze_base_loops(root_node)
-            
-            
+            # Pick the heaviest complexity found in the entire file!
+            rule_results = get_dominant_result(found_results)
             
         # Step 2: SPACE COMPLEXITY ENGINE
-        # Run our new space analyzer to double-check memory usage
         calculated_space = analyze_space_complexity(
             root_node, 
             submission.code, 
@@ -96,16 +108,14 @@ async def analyze_code(submission: CodeSubmission):
         return {
             "status": "success",
             "time_complexity": rule_results["time_complexity"],
-            "space_complexity": calculated_space, # Use the new calculated space!
-            #"analysis_steps": rule_results["analysis_steps"] + [f"Analyzed AST for memory allocation: Space complexity is {calculated_space}."],
+            "space_complexity": calculated_space,
             "ai_suggestion": ai_text
         }
         
     except Exception as e:
-        import traceback # <--- Add this import right here
-        traceback.print_exc() # <--- This forces the terminal to print the full red error!
+        import traceback 
+        traceback.print_exc() 
         raise HTTPException(status_code=500, detail=f"Error analyzing code: {str(e)}")
-    
 
 @app.get("/")
 async def root():

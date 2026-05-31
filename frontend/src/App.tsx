@@ -52,7 +52,7 @@ export default function App() {
         
         {/* The Footer stays at the bottom of EVERY page */}
         <footer className="w-full max-w-4xl mt-20 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 transition-colors duration-300">
-          Big O Calc — Free algorithm complexity analyzer \ <a href="https://github.com/Lunasgogoi/big-o-notation-calculator" target="_blank" rel="noreferrer" className="hover:underline">GitHub</a></footer>
+          Big O Calc — Free algorithm complexity analyzer \ <a href="https://github.com/Lunasgogoi/big-o-calculator" target="_blank" rel="noreferrer" className="hover:underline">GitHub</a></footer>
       </div>
     </Router>
   );

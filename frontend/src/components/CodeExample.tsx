@@ -15,4 +15,6 @@ export default function CodeExample({ title, badgeTitle, lightBg, lightText, dar
       <p className="text-gray-600 dark:text-gray-400 text-sm">{explanation}</p>
     </div>
   );
-}
+} 
+
+// what it does - This component renders a code example with a title, badge, code block, and explanation.

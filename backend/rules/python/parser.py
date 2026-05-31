@@ -1,5 +1,5 @@
 from tree_sitter import Language, Parser
-from typing import Any
+from typing import Any, cast
 import tree_sitter_python as tspython
 import tree_sitter_cpp as tscpp
 
@@ -11,14 +11,13 @@ def parse_code(raw_code: str, language: str):
     """
     Dynamically switches the AST parser based on the frontend selection.
     """
-    parser = Parser()
-    code_bytes = bytes(raw_code, "utf8")
-    
+    # cast to Any to satisfy static analyzers that may not recognize
+    # the dynamically provided set_language attribute on Parser
+    parser = cast(Any, Parser())
     if language.lower() == "cpp" or language.lower() == "c++":
-        parser.language = CPP_LANGUAGE
-        tree = parser.parse(code_bytes)
-        return tree.root_node
+        parser.set_language(CPP_LANGUAGE)
     else:
-        parser.language = PY_LANGUAGE
-        tree = parser.parse(code_bytes)
-        return tree.root_node
+        parser.set_language(PY_LANGUAGE)
+        
+    code_bytes = bytes(raw_code, "utf8")
+    return parser.parse(code_bytes)

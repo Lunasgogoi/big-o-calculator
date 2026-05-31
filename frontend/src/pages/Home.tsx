@@ -84,6 +84,8 @@ export default function Home({code, setCode,language,setLanguage}: any) {
             {/* The New Language Dropdown! */}
             {/* The Beautifully Styled Language Dropdown */}
             <select 
+              title="Select programming language"
+              aria-label="Select programming language"
               value={language} 
               onChange={(e) => setLanguage(e.target.value)}
               className="ml-4 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all cursor-pointer"
