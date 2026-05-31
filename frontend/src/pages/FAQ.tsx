@@ -1,28 +1,53 @@
 // src/pages/FAQ.tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { faqData } from '../data/faqData';
+
 export default function FAQ() {
   return (
-    <div className="w-full max-w-4xl text-left">
-      <h1 className="text-4xl font-serif font-bold text-gray-900 dark:text-white mb-6">
-        Frequently Asked Questions
-      </h1>
+    <div className="max-w-4xl mx-auto w-full pt-8 pb-24 text-gray-300">
       
-      <div className="space-y-6 bg-white dark:bg-[#161616] p-8 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-        
-        <div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">How does the calculator work?</h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-            Our engine uses Tree-sitter to parse your source code into an Abstract Syntax Tree (AST). It then runs a series of heuristic rules to determine loop depth, recursive calls, and recognizable algorithm patterns to calculate the complexity.
-          </p>
-        </div>
-
-        <div className="pt-6 border-t border-gray-200 dark:border-gray-800">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Is my code sent to a server?</h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-            Yes, your code is securely sent to our backend engine to be parsed and analyzed, and also forwarded to an AI model to generate educational suggestions. We do not store your code snippets permanently.
-          </p>
-        </div>
-
+      {/* Header */}
+      <div className="mb-16">
+        <h1 className="text-4xl font-bold mb-4 font-serif text-white">Frequently Asked Questions</h1>
+        <p className="text-gray-400 text-lg">Common questions about Big O notation and algorithm complexity</p>
       </div>
+
+      {/* Map through the FAQ Categories */}
+      {faqData.map((category, catIndex) => (
+        <div key={catIndex} className="mb-16">
+          <h2 className="text-2xl font-bold mb-8 font-serif text-white border-b border-gray-800 pb-2">
+            {category.categoryName}
+          </h2>
+          
+          <div className="space-y-10">
+            {/* Map through the Questions inside each Category */}
+            {category.questions.map((item, qIndex) => (
+              <div key={qIndex}>
+                <h3 className="text-lg font-bold mb-4 text-white">
+                  {item.question}
+                </h3>
+                <div className="text-gray-400 leading-relaxed">
+                  {/* We render the formatted JSX directly here! */}
+                  {item.answer}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Footer Section */}
+      <div className="border-t border-gray-800 pt-12 mt-8">
+        <h2 className="text-2xl font-bold mb-6 font-serif text-white">Still Have Questions?</h2>
+        <p className="text-gray-400 mb-4">If your question wasn't answered here, try these resources:</p>
+        <ul className="list-disc pl-6 space-y-3 text-gray-400">
+          <li>Read our <Link to="/guide" className="text-emerald-500 hover:text-emerald-400">comprehensive Big O guide</Link> for in-depth explanations</li>
+          <li>Explore <Link to="/examples" className="text-emerald-500 hover:text-emerald-400">real algorithm examples</Link> with detailed analysis</li>
+          <li>Use our <Link to="/" className="text-emerald-500 hover:text-emerald-400">calculator</Link> to analyze your specific code</li>
+        </ul>
+      </div>
+
     </div>
   );
 }
