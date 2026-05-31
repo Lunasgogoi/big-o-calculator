@@ -4,7 +4,33 @@
 /* 2. Tell Tailwind to use our 'dark' class instead of the OS system preference */
 @variant dark (&:where(.dark, .dark *));
 
-/* 3. Your custom body styling (Optional, but keeps the background clean!) */
+/* 3. Light Mode CSS Variables */
+:root {
+  --accent: #10b981;
+  --accent-bg: #ecfdf5;
+  --accent-border: #d1fae5;
+  --border: #e5e7eb;
+  --text-h: #1f2937;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+  --social-bg: #f3f4f6;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 4. Dark Mode CSS Variables */
+.dark {
+  --accent: #10b981;
+  --accent-bg: #064e3b;
+  --accent-border: #065f46;
+  --border: #374151;
+  --text-h: #f3f4f6;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --social-bg: #1f2937;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* 5. Your custom body styling */
 body {
   background-color: #f9fafb; /* Light mode default (gray-50) */
   color: #1f2937; /* Light mode text (gray-800) */
