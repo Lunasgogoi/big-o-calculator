@@ -1,10 +1,10 @@
-# 🧠 AI-Powered Algorithmic Complexity Analyzer
+#  AI-Powered Algorithmic Complexity Analyzer
 
 An intelligent, compiler-grade static code analyzer built to accurately determine the Time (O) and Space complexities of competitive programming and algorithmic code. 
 
 Unlike naive linting tools that simply count nested loops, this engine parses the **Abstract Syntax Tree (AST)** to detect advanced structural paradigms (like Amortized O(n) Sliding Windows, Monotonic Stacks, and Graph Traversals) and uses Google's Gemini AI to explain the underlying logic.
 
-### ✨ Key Features
+###  Key Features
 
 * **Advanced AST Parsing:** Utilizes `tree-sitter` to read code structure, ignoring syntax formatting and focusing purely on algorithmic execution.
 * **Smart Paradigm Detection:** Specifically trained to recognize patterns from advanced DSA sheets (like Striver's A2Z), including:
