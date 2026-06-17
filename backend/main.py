@@ -16,6 +16,9 @@ from rules.python.heap import analyze_heap
 from rules.python.linked_list import analyze_linked_list
 from rules.python.monotonic_stack import analyze_monotonic_stack
 from rules.python.built_in_sort import analyze_sort_search
+from rules.python.matrix import analyze_matrix
+from rules.python.built_in_iterators import analyze_built_in_iterators
+from rules.python.math_loops import analyze_math_loops
 
 import rules.python.graph_traversal as py_graph
 
@@ -36,17 +39,25 @@ class CodeSubmission(BaseModel):
     language: str = "python" 
 
 # 🚨 THE RANKING SYSTEM: Determines which Big O is the heaviest
+# 🚨 THE RANKING SYSTEM
+# 🚨 THE RANKING SYSTEM (Now Bulletproof)
 COMPLEXITY_RANKS = {
     "O(1)": 1,
     "O(log n)": 2,
-    "O(n)": 3,
-    "O(V + E)": 3,
-    "O(n log n)": 4,
-    "O(n^2)": 5,
-    "O(n^3)": 6,
-    "O(2^n)": 7
+    "O(log N)": 2,
+    "O(sqrt(n))": 3,
+    "O(sqrt(N))": 3,
+    "O(n)": 4,
+    "O(N)": 4,       # <--- The culprit!
+    "O(V + E)": 4,
+    "O(n log n)": 5,
+    "O(N log N)": 5,
+    "O(n^2)": 6,
+    "O(N^2)": 6,
+    "O(N * M)": 6,
+    "O(n^3)": 7,
+    "O(2^n)": 8
 }
-
 def get_dominant_result(results: list):
     """Filters out None values and returns the rule result with the highest time complexity."""
     valid_results = [r for r in results if r is not None and r["time_complexity"] in COMPLEXITY_RANKS]
@@ -84,9 +95,14 @@ async def analyze_code(submission: CodeSubmission):
             found_results.append(analyze_recursion(root_node, submission.code))
             found_results.append(analyze_sliding_window(root_node, submission.code))
             found_results.append(analyze_monotonic_stack(root_node, submission.code))
+            found_results.append(analyze_matrix(root_node, submission.code))
             found_results.append(analyze_heap(root_node, submission.code))
             found_results.append(py_logarithmic(root_node, submission.code))
+            found_results.append(analyze_built_in_iterators(root_node, submission.code))
+            found_results.append(analyze_math_loops(root_node, submission.code))
             found_results.append(analyze_base_loops(root_node)) # The fallback loop counter
+            
+            print(f"DEBUG - FOUND RESULTS: {found_results}")
             
             # Pick the heaviest complexity found in the entire file!
             rule_results = get_dominant_result(found_results)
