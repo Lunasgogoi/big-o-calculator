@@ -1,9 +1,7 @@
 # backend/rules/python/recursion.py
 
 def count_recursive_calls(node, func_name, code_bytes):
-    """
-    Recursively scans the AST to count how many times a function calls itself.
-    """
+    """Recursively scans the AST to count how many times a function calls itself."""
     count = 0
     if node.type == 'call':
         func_node = node.child_by_field_name('function')
@@ -18,36 +16,38 @@ def count_recursive_calls(node, func_name, code_bytes):
     return count
 
 def analyze_recursion(root_node, raw_code):
-    """
-    Distinguishes between Linear Recursion O(n) and Branching Recursion O(2^n).
-    """
+    """Distinguishes between Linear O(n), Branching O(2^n), and Divide & Conquer O(n log n)."""
     code_bytes = bytes(raw_code, "utf8")
     
     for node in root_node.children:
         if node.type == 'function_definition':
-            # 1. Get the name of the function
             name_node = node.child_by_field_name('name')
             if not name_node: continue
             
             func_name = code_bytes[name_node.start_byte:name_node.end_byte].decode('utf8')
             body_node = node.child_by_field_name('body')
-            
             if not body_node: continue
             
-            # 2. Count how many times it calls itself inside its own body
             calls = count_recursive_calls(body_node, func_name, code_bytes)
             
             if calls == 1:
-                # Linear Recursion (e.g., Factorial, simple DFS)
-                return {
-                    "time_complexity": "O(n)",
-                    "space_complexity": "O(n)", # The Call Stack takes O(n) memory!
-                }
+                return {"time_complexity": "O(n)", "space_complexity": "O(n)"}
+                
             elif calls > 1:
-                # Branching Recursion (e.g., standard Fibonacci)
+                # 🚨 DIVIDE & CONQUER INTERCEPTOR 🚨
+                # Extract the raw text of the function body to look for halving math
+                body_text = code_bytes[body_node.start_byte:body_node.end_byte].decode('utf8').lower().replace(" ", "")
+                
+                if "//2" in body_text or "/2" in body_text or ">>1" in body_text or "mid=" in body_text or "[:" in body_text:
+                    return {
+                        "time_complexity": "O(n log n)",
+                        "space_complexity": "O(n)", # Merge sort requires O(n) array allocations
+                    }
+                    
+                # If no halving math is found, it's standard Branching Recursion
                 return {
                     "time_complexity": "O(2^n)",
-                    "space_complexity": "O(n)", # The Call Stack still takes O(n) memory
+                    "space_complexity": "O(n)", 
                 }
                 
     return None

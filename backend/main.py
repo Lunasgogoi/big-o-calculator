@@ -19,6 +19,10 @@ from rules.python.built_in_sort import analyze_sort_search
 from rules.python.matrix import analyze_matrix
 from rules.python.built_in_iterators import analyze_built_in_iterators
 from rules.python.math_loops import analyze_math_loops
+from rules.python.advanced_graphs import analyze_advanced_graphs
+from rules.python.dsu import analyze_dsu
+from rules.python.sieve import analyze_sieve
+from rules.python.backtracking import analyze_backtracking
 
 import rules.python.graph_traversal as py_graph
 
@@ -38,9 +42,8 @@ class CodeSubmission(BaseModel):
     code: str
     language: str = "python" 
 
-# 🚨 THE RANKING SYSTEM: Determines which Big O is the heaviest
 # 🚨 THE RANKING SYSTEM
-# 🚨 THE RANKING SYSTEM (Now Bulletproof)
+# 🚨 THE RANKING SYSTEM (Mathematically Corrected)
 COMPLEXITY_RANKS = {
     "O(1)": 1,
     "O(log n)": 2,
@@ -48,16 +51,25 @@ COMPLEXITY_RANKS = {
     "O(sqrt(n))": 3,
     "O(sqrt(N))": 3,
     "O(n)": 4,
-    "O(N)": 4,       # <--- The culprit!
+    "O(N)": 4,       
     "O(V + E)": 4,
+    "O(E * α(V))": 4,
+    "O(n log log n)": 4.5,
     "O(n log n)": 5,
     "O(N log N)": 5,
     "O(n^2)": 6,
     "O(N^2)": 6,
     "O(N * M)": 6,
+    "O(E log V)": 6.5, # <--- Bumped above O(n^2)!
+    "O(E log E)": 6.5, # <--- Kruskal's bumped above O(n^2)!
     "O(n^3)": 7,
-    "O(2^n)": 8
+    "O(N^3)": 7,
+    "O(V^3)": 7,
+    "O(2^n)": 8,
+    "O(n!)": 9,      # <--- Add Factorial at the very bottom!
+    "O(N!)": 9
 }
+
 def get_dominant_result(results: list):
     """Filters out None values and returns the rule result with the highest time complexity."""
     valid_results = [r for r in results if r is not None and r["time_complexity"] in COMPLEXITY_RANKS]
@@ -85,6 +97,8 @@ async def analyze_code(submission: CodeSubmission):
             # 🚨 THE NEW PYTHON PIPELINE: Collect ALL results!
             found_results = []
             
+            found_results.append(analyze_advanced_graphs(root_node, submission.code))
+            found_results.append(analyze_dsu(root_node, submission.code)) # <-- Add this!
             found_results.append(py_graph.analyze_graph_traversal(root_node, submission.code))
             found_results.append(analyze_sorting_search(root_node, submission.code))
             found_results.append(analyze_sort_search(root_node, submission.code))
@@ -92,6 +106,7 @@ async def analyze_code(submission: CodeSubmission):
             found_results.append(analyze_binary_tree(root_node, submission.code))
             found_results.append(analyze_dp(root_node, submission.code))
             found_results.append(analyze_tabulation(root_node, submission.code))
+            found_results.append(analyze_backtracking(root_node, submission.code))
             found_results.append(analyze_recursion(root_node, submission.code))
             found_results.append(analyze_sliding_window(root_node, submission.code))
             found_results.append(analyze_monotonic_stack(root_node, submission.code))
@@ -99,10 +114,15 @@ async def analyze_code(submission: CodeSubmission):
             found_results.append(analyze_heap(root_node, submission.code))
             found_results.append(py_logarithmic(root_node, submission.code))
             found_results.append(analyze_built_in_iterators(root_node, submission.code))
+            found_results.append(analyze_sieve(root_node, submission.code))
             found_results.append(analyze_math_loops(root_node, submission.code))
             found_results.append(analyze_base_loops(root_node)) # The fallback loop counter
             
             print(f"DEBUG - FOUND RESULTS: {found_results}")
+            
+            has_sieve = any(r and r["time_complexity"] == "O(n log log n)" for r in found_results)
+            if has_sieve:
+                found_results = [r for r in found_results if r and r["time_complexity"] not in ["O(n^2)", "O(N^2)"]]
             
             # Pick the heaviest complexity found in the entire file!
             rule_results = get_dominant_result(found_results)

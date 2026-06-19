@@ -1,29 +1,30 @@
 // src/pages/Home.tsx
 import { useState } from 'react';
-import { Link } from 'react-router-dom'; // Added this to link to our other pages!
+import { Link } from 'react-router-dom';
 import ComplexityCard from '../components/ComplexityCard';
 import CodeExample from '../components/CodeExample';
 import ResultPanel from '../components/ResultPanel';
 import CodeEditor from '../components/CodeEditor';
-import toast from 'react-hot-toast'
+import toast from 'react-hot-toast';
 
-//import { useEffect } from 'react';
+interface HomeProps {
+  code: string;
+  setCode: (code: string) => void;
+  language: string;
+  setLanguage: (lang: string) => void;
+}
 
 interface AnalysisResult {
   status: string;
   time_complexity: string;
   space_complexity: string;
-  analysis_steps: string[];
+  analysis_steps?: string[]; 
   ai_suggestion: string;
 }
 
-export default function Home({code, setCode,language,setLanguage}: any) {
- 
+export default function Home({ code, setCode, language, setLanguage }: HomeProps) {
   const [result, setResult] = useState<AnalysisResult | null>(null);
-
-
   const [isLoading, setIsLoading] = useState(false);
-  const [error] = useState<string | null>(null);
 
   const handleCalculate = async () => {
     if (!code.trim()) {
@@ -32,23 +33,21 @@ export default function Home({code, setCode,language,setLanguage}: any) {
     } 
   
     setIsLoading(true);
-
     setResult(null);
 
     try {
       const response = await fetch('http://localhost:8000/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code, language: language }), // <-- Sends the dynamic language!
+        body: JSON.stringify({ code: code, language: language }), 
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 429) { // Too Many Requests(rate limit) || 500 server error
+        if (response.status === 429) { 
           throw new Error("API rate limit exceeded. Please wait a moment and try again.");
         }
-
         throw new Error(data.detail || "Failed to analyze code.");
       }
 
@@ -63,10 +62,9 @@ export default function Home({code, setCode,language,setLanguage}: any) {
     }
   };
 
-
   return (
     <>
-      {/* --- HERO & EDITOR SECTION --- */}
+      {/* --- HERO SECTION --- */}
       <header className="mb-10">
         <h1 className="text-4xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">Big O Calc</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
@@ -74,6 +72,7 @@ export default function Home({code, setCode,language,setLanguage}: any) {
         </p>
       </header>
 
+      {/* --- EDITOR SECTION --- */}
       <div className="bg-white dark:bg-[#161616] rounded-xl border border-gray-300 dark:border-gray-800 p-4 mb-6 shadow-xl dark:shadow-2xl transition-colors duration-300">
         <div className="flex justify-between items-center mb-4 text-xs text-gray-500 border-b border-gray-200 dark:border-gray-800 pb-3">
           <div className="flex space-x-2 items-center">
@@ -81,27 +80,28 @@ export default function Home({code, setCode,language,setLanguage}: any) {
             <div className="w-3 h-3 rounded-full bg-amber-400 dark:bg-gray-700"></div>
             <div className="w-3 h-3 rounded-full bg-green-400 dark:bg-gray-700"></div>
             
-            {/* The New Language Dropdown! */}
-            {/* The Beautifully Styled Language Dropdown */}
+            {/* The Language Dropdown (Updated to Blue Focus Ring) */}
             <select 
               title="Select programming language"
               aria-label="Select programming language"
               value={language} 
               onChange={(e) => setLanguage(e.target.value)}
-              className="ml-4 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all cursor-pointer"
+              className="ml-4 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
             >
               <option value="python" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">Python</option>
               <option value="cpp" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C++</option>
-              <option value="c" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C</option>
             </select>
           </div>
           <div>{code.length} / 1,500</div>
         </div>
         
-        {/* Pass the dynamic language down to PrismJS! */}
+        {/* Pass the props to PrismJS/CodeEditor! */}
         <CodeEditor code={code} setCode={setCode} language={language} />
       </div>
 
+      {/* --- SUBMIT BUTTON --- */}
+      {/* --- SUBMIT BUTTON --- */}
+      {/* --- SUBMIT BUTTON --- */}
       <button 
         onClick={handleCalculate}
         disabled={isLoading}
@@ -109,9 +109,8 @@ export default function Home({code, setCode,language,setLanguage}: any) {
       >
         {isLoading ? 'Analyzing Code...' : 'Calculate'}
       </button>
-
-      {/* {error && <div className="text-red-600 dark:text-red-400 mb-8 p-4 border border-red-300 dark:border-red-900 rounded-lg bg-red-50 dark:bg-red-950/30">{error}</div>} */}
       
+      {/* --- RESULTS PANEL --- */}
       {result ? <ResultPanel result={result} /> : (
         <div className="border border-dashed border-gray-300 dark:border-gray-800 rounded-xl p-8 text-center text-gray-600 dark:text-gray-500 bg-gray-100 dark:bg-[#0f0f0f] mb-20 transition-colors duration-300">
           Paste your code above and click <strong className="text-gray-900 dark:text-white">Calculate</strong> to analyze its time and space complexity.
@@ -122,18 +121,24 @@ export default function Home({code, setCode,language,setLanguage}: any) {
       <div className="space-y-20 max-w-3xl text-left">
         
         <section className="mb-16 mt-16 max-w-3xl text-left">
-        <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">How to Use This Tool</h2>
-        <ol className="list-decimal list-outside space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed pl-5 mb-8">
-          <li><strong>Paste your code</strong> into the editor above. Supports JavaScript, Python, Java, C++, and more.</li>
-          <li><strong>Click Calculate</strong> to analyze the time and space complexity using Big O notation.</li>
-          <li><strong>Review the result</strong> — you'll get a step-by-step breakdown of how the complexity was determined.</li>
-        </ol>
-        
-        {/* Styling the Tip box with muted colors and subtle border */}
-        <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
-          <strong>Tip:</strong> Keep your code under 1,500 characters for best results. Focus on the core algorithm rather than boilerplate code.
-        </div>
-      </section>
+          <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">How to Use This Tool</h2>
+          <ol className="list-decimal list-outside space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed pl-5 mb-8">
+            <li><strong>Paste your code</strong> into the editor above. Supports Python and C++.</li>
+            <li><strong>Click Calculate</strong> to analyze the time and space complexity using Big O notation.</li>
+            <li><strong>Review the result</strong> — you'll get a step-by-step breakdown of how the complexity was determined.</li>
+          </ol>
+          
+          {/* Stacked Tip Boxes (Clean, Dark UI) */}
+          <div className="space-y-3">
+            <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
+              <span className="font-bold text-gray-800 dark:text-gray-300">Tip:</span> Keep your code under 1,500 characters for best results. Focus on the core algorithm rather than boilerplate code.
+            </div>
+            
+            <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
+              <span className="font-bold text-gray-800 dark:text-gray-300">Tip:</span> For the most accurate analysis, use standard naming conventions (e.g., <code>adj</code>, <code>dp</code>, <code>pq</code>, <code>dfs</code>). If the engine gets confused by unusual variable names, our AI will attempt to step in and correct the results!
+            </div>
+          </div>
+        </section>
 
         {/* Common Complexity Classes */}
         <section>
@@ -147,7 +152,7 @@ export default function Home({code, setCode,language,setLanguage}: any) {
             <ComplexityCard title="O(2ⁿ)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400" name="Exponential" description="Recursive Fibonacci" />
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Learn the details in our <Link to="/guide" className="text-teal-600 dark:text-teal-500 hover:underline">comprehensive guide</Link>.
+            Learn the details in our <Link to="/guide" className="text-blue-600 dark:text-blue-500 hover:underline">comprehensive guide</Link>.
           </p>
         </section>
 
@@ -179,7 +184,7 @@ export default function Home({code, setCode,language,setLanguage}: any) {
             </div>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            See more on the <Link to="/examples" className="text-teal-600 dark:text-teal-500 hover:underline">examples page</Link>.
+            See more on the <Link to="/examples" className="text-blue-600 dark:text-blue-500 hover:underline">examples page</Link>.
           </p>
         </section>
 
@@ -199,8 +204,8 @@ export default function Home({code, setCode,language,setLanguage}: any) {
 
         <section className="space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed border-t border-gray-200 dark:border-gray-800 pt-10">
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-4">Start Learning</h2>
-          <p>New to Big O? Our <Link to="/tutorial" className="text-teal-600 dark:text-teal-500 hover:underline">step-by-step tutorial</Link> walks you through 16 lessons covering everything from constant time to dynamic programming and graph traversal.</p>
-          <p>Prefer a reference? Read the <Link to="/guide" className="text-teal-600 dark:text-teal-500 hover:underline">comprehensive guide</Link> for a complete overview of all complexity classes, or explore <Link to="/examples" className="text-teal-600 dark:text-teal-500 hover:underline">real algorithm examples</Link> with detailed analysis. Have questions? Check the <Link to="/faq" className="text-teal-600 dark:text-teal-500 hover:underline">FAQ</Link>.</p>
+          <p>New to Big O? Our <Link to="/tutorial" className="text-blue-600 dark:text-blue-500 hover:underline">step-by-step tutorial</Link> walks you through 16 lessons covering everything from constant time to dynamic programming and graph traversal.</p>
+          <p>Prefer a reference? Read the <Link to="/guide" className="text-blue-600 dark:text-blue-500 hover:underline">comprehensive guide</Link> for a complete overview of all complexity classes, or explore <Link to="/examples" className="text-blue-600 dark:text-blue-500 hover:underline">real algorithm examples</Link> with detailed analysis. Have questions? Check the <Link to="/faq" className="text-blue-600 dark:text-blue-500 hover:underline">FAQ</Link>.</p>
         </section>
 
       </div>

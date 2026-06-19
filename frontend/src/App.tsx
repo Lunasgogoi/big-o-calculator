@@ -23,7 +23,7 @@ export default function App() {
       localStorage.setItem('theme', 'dark'); // Save preference
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light'); // Save preference
+      localStorage.setItem('theme', 'light'); // Save preference          <strong className="text-gray-900 dark:text-white">Calculate</strong>
     }
   }, [isDarkMode]);
 

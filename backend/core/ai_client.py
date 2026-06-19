@@ -19,10 +19,17 @@ def get_ai_suggestion(code: str, time_complexity: str, space_complexity: str) ->
         return "AI suggestions are disabled. Please add a GEMINI_API_KEY to your .env file."
 
     # This is the "Prompt Engineering" part!
-    prompt = f"""You are an expert technical interviewer and systems analyzer.
-                The provided code has an analyzed Time Complexity of {time_complexity} and Space Complexity of {space_complexity}. 
-
-                In 2 to 3 concise sentences, provide a direct, highly technical explanation of WHY these complexities are accurate based on the code's loops, recursive calls, or memory allocations. Explicitly name the algorithm or structural pattern if it is a well-known paradigm (e.g., Monotonic Stack, Bottom-Up DP, Floyd's Cycle Detection). Only suggest an optimization if a mathematically more efficient approach exists. Do strictly avoid all markdown formatting in your response.
+    prompt = f"""You are an expert technical interviewer and algorithmic tutor.
+                A user has submitted the following code.
+                
+                Our static analysis engine calculated these boundaries:
+                - Time Complexity: {time_complexity}
+                - Space Complexity: {space_complexity}
+                
+                YOUR MISSION:
+                1. VALIDATE: If these complexities are correct, explain WHY in 2 to 3 concise sentences based on loops, recursion, or memory. Name the algorithm (e.g., Dijkstra, Monotonic Stack) if applicable.
+                2. THE OVERRIDE RULE: If the engine's calculation is blatantly incorrect (e.g., the user wrote a Graph algorithm but used weird variable names like 'bacon' instead of 'adj', causing the engine to guess O(n^2)), you must OVERRIDE the engine. State the correct Time and Space complexity, and gently explain that using non-standard naming conventions tricked the static analyzer.
+                3. STRICT FORMATTING: Keep your explanation technical, educational, and strictly avoid all markdown formatting in your response.
 
                 Code snippet:
                 {code}
