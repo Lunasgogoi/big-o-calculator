@@ -16,7 +16,7 @@ const getBadgeStyles = (color: string) => {
 export default function Guide() {
   return (
     <div className="max-w-4xl mx-auto w-full pt-8 pb-24 text-gray-700 dark:text-gray-300">
-      
+
       <div className="mb-12">
         <h1 className="text-4xl font-bold mb-4 font-serif text-gray-900 dark:text-white">Big O Notation: A Comprehensive Guide</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg">Master algorithm complexity analysis with this complete guide</p>
@@ -32,9 +32,26 @@ export default function Guide() {
       </section>
 
       <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 font-serif text-gray-900 dark:text-white">Growth Comparison</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Best', color: 'text-green-400', val: 'O(1), O(log n)' },
+            { label: 'Good', color: 'text-blue-400', val: 'O(n)' },
+            { label: 'Fair', color: 'text-orange-400', val: 'O(n log n)' },
+            { label: 'Poor', color: 'text-red-400', val: 'O(n²), O(2ⁿ)' }
+          ].map((g) => (
+            <div key={g.label} className="bg-white dark:bg-[#121212] p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-center">
+              <p className="text-xs font-bold text-gray-500 uppercase">{g.label}</p>
+              <p className={`text-lg font-bold ${g.color}`}>{g.val}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-16">
         <h2 className="text-2xl font-bold mb-6 font-serif text-gray-900 dark:text-white">Common Time Complexities</h2>
         <p className="mb-8 text-gray-600 dark:text-gray-400">Here are the most common time complexities you'll encounter, ordered from best to worst performance:</p>
-        
+
         <div className="space-y-12">
           {timeComplexities.map((item) => (
             <div key={item.id}>
@@ -43,13 +60,13 @@ export default function Guide() {
                 {item.badgeText}
               </span>
               <p className="text-gray-600 dark:text-gray-400 mb-6">{item.description}</p>
-              
-              <div className="bg-gray-50 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl p-5 mb-4">
-                <pre className="text-sm font-mono text-gray-800 dark:text-gray-300 overflow-x-auto whitespace-pre">
+
+              <div className="bg-[#0a0a0a] rounded-xl p-5 my-5 border border-gray-800 shadow-inner">
+                <pre className="font-mono text-sm text-gray-300 overflow-x-auto whitespace-pre">
                   <code>{item.code}</code>
                 </pre>
               </div>
-              
+
               {item.examplesList && (
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   <strong className="text-gray-900 dark:text-gray-200">Examples:</strong> {item.examplesList}
@@ -72,14 +89,20 @@ export default function Guide() {
           </ul>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           {spaceComplexities.map((item) => (
-            <div key={item.id} className="border border-gray-200 dark:border-gray-800 rounded-xl bg-white dark:bg-[#121212] shadow-sm dark:shadow-none overflow-hidden">
-              <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{item.title}</h3>
+            <div
+              key={item.id}
+              className="rounded-xl border border-gray-800 bg-[#121212]"
+            >
+              <div className="px-6 py-5">
+                <h3 className="text-xl font-bold text-white">
+                  {item.title}
+                </h3>
               </div>
-              <div className="p-5 bg-gray-50 dark:bg-[#1e1e1e]">
-                <pre className="text-sm font-mono text-gray-800 dark:text-gray-300 overflow-x-auto whitespace-pre">
+
+              <div className="border-t border-gray-800">
+                <pre className="overflow-x-auto p-6 text-sm text-gray-300">
                   <code>{item.code}</code>
                 </pre>
               </div>

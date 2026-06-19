@@ -80,24 +80,50 @@ export const faqData: FAQCategory[] = [
       {
         question: "How do I know if my nested loops are O(n²)?",
         answer: (
-          <div className="space-y-4">
-            <p>If you have two nested loops that both iterate through the entire input, you typically have O(n²) complexity. For example:</p>
-            <div className="bg-[#1e1e1e] border border-gray-800 rounded-xl p-4">
-              <pre className="text-sm font-mono text-gray-300">
-<code>{`for i in range(n):     # Runs n times
-  for j in range(n):   # Runs n times for each i`}</code>
+          <div className="space-y-6">
+            <p>
+              If you have two nested loops that both iterate through the entire input,
+              you typically have <span className="font-semibold">O(n²)</span> complexity.
+              For example:
+            </p>
+
+            <div className="overflow-hidden rounded-xl border border-gray-800 bg-[#0d0d0d]">
+              <pre className="overflow-x-auto p-5 text-sm text-gray-300">
+                <code>{`for i in range(n):     # Runs n times
+    for j in range(n):   # Runs n times for each i`}</code>
               </pre>
             </div>
-            <p>However, if the inner loop doesn't always run n times, the complexity might be different. For example:</p>
-            <div className="bg-[#1e1e1e] border border-gray-800 rounded-xl p-4">
-              <pre className="text-sm font-mono text-gray-300">
-<code>{`for i in range(n):     # Runs n times
-  for j in range(i):   # Runs i times (0, 1, 2, ..., n-1)`}</code>
+
+            <p>
+              However, if the inner loop doesn't always run <code>n</code> times,
+              the complexity may be different:
+            </p>
+
+            <div className="overflow-hidden rounded-xl border border-gray-800 bg-[#0d0d0d]">
+              <pre className="overflow-x-auto p-5 text-sm text-gray-300">
+                <code>{`for i in range(n):     # Runs n times
+    for j in range(i):   # Runs i times (0, 1, 2, ..., n-1)`}</code>
               </pre>
             </div>
-            <p>This is still O(n²) because we drop the constant factor of 1/2 and the lower-order term.</p>
+
+            <div className="rounded-lg border-l-4 border-blue-500 bg-blue-500/10 px-4 py-3">
+              <p className="text-gray-300">
+                Total operations:
+                <br />
+                <code>0 + 1 + 2 + ... + (n - 1)</code>
+                <br />
+                = <code>n(n - 1) / 2</code>
+                <br />
+                = <code>O(n²)</code>
+              </p>
+            </div>
+
+            <p>
+              We drop the constant factor <code>1/2</code> and lower-order terms,
+              leaving the final complexity as <strong>O(n²)</strong>.
+            </p>
           </div>
-        )
+        ),
       },
       {
         question: "What does O(log n) mean in practical terms?",
