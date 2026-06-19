@@ -36,7 +36,7 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
     setResult(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/analyze', {
+      const response = await fetch('https://big-o-calculator-pn19.onrender.com/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: code, language: language }), 
