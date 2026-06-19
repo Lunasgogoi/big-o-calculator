@@ -1,5 +1,5 @@
 // src/pages/FAQ.tsx
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import { faqData } from '../data/faqData';
 

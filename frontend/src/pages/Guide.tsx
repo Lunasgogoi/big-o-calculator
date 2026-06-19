@@ -1,5 +1,5 @@
 // src/pages/Guide.tsx
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import { timeComplexities, spaceComplexities } from '../data/guideData';
 
