@@ -43,7 +43,11 @@ app = FastAPI(title="Big O Analyzer API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://big-o-calculator-pn19.onrender.com"
+    ], 
     allow_credentials=False,  # 🚨 CHANGE THIS TO FALSE
     allow_methods=["*"],
     allow_headers=["*"],
@@ -137,7 +141,20 @@ async def analyze_code(submission: CodeSubmission):
             # found_results.append(analyze_bellman_ford(root_node, submission.code))
             # found_results.append(analyze_floyd_warshall(root_node, submission.code))
             
-            found_results.append(analyze_base_loops(root_node)) # The fallback loop counter
+            base_loop_res = analyze_base_loops(root_node)
+            
+            # Did a smart rule already identify a sub-linear loop?
+            has_sub_linear = any(
+                r and r["time_complexity"] in ["O(log n)", "O(log N)", "O(sqrt(n))", "O(sqrt(N))"] 
+                for r in found_results
+            )
+            
+            # If we found a log/sqrt loop, and the generic counter is only guessing O(n), 
+            # we discard the generic guess so it doesn't overpower the smart rule!
+            if has_sub_linear and base_loop_res["time_complexity"] in ["O(N)", "O(n)"]:
+                pass # Do nothing (discard the O(n) guess)
+            else:
+                found_results.append(base_loop_res)
             
             print(f"DEBUG - FOUND RESULTS: {found_results}")
             

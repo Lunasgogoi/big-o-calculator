@@ -36,10 +36,12 @@ export default function ResultPanel({ result }: any) {
 
       {/* AI Suggestion Box */}
       <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
-        <span className="text-teal-600 dark:text-teal-500 font-bold mr-2">AI Overview:</span>
-        <span className="text-gray-700 dark:text-gray-300 leading-relaxed">
+        <div className="text-teal-600 dark:text-teal-500 font-bold mb-2">AI Overview:</div>
+        
+        {/* 🚨 THE FIX: Added whitespace-pre-wrap here */}
+        <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
           {result.ai_suggestion}
-        </span>
+        </div>
       </div>
     </div>
   );
