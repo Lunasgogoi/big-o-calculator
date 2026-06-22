@@ -44,9 +44,7 @@ app = FastAPI(title="Big O Analyzer API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://big-o-calculator-pn19.onrender.com"
+        "*",
     ], 
     allow_credentials=False,  # 🚨 CHANGE THIS TO FALSE
     allow_methods=["*"],
