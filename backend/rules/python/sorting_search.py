@@ -1,15 +1,15 @@
-# backend/rules/sorting_search.py
+# backend/rules/python/sorting_search.py
 
 def walk_ast_for_binary_search(node, code_bytes):
     """
     Recursively checks if a while loop contains a division by 2 (halving the search space).
     """
     if node.type == 'while_statement':
-        # Get the actual text inside the while loop
-        body_text = code_bytes[node.start_byte:node.end_byte].decode('utf8')
+        # 🚨 THE FIX: Strip spaces from the text so spacing doesn't break the rule
+        body_text = code_bytes[node.start_byte:node.end_byte].decode('utf8').replace(" ", "")
         
-        # Look for the classic binary search 'halving' fingerprint
-        if '/ 2' in body_text or '// 2' in body_text or '>> 1' in body_text:
+        # Look for the classic binary search 'halving' fingerprint (without spaces)
+        if '/2' in body_text or '//2' in body_text or '>>1' in body_text:
             return True
             
     # Keep searching down the tree
@@ -31,8 +31,6 @@ def analyze_sorting_search(root_node, raw_code):
         return {
             "time_complexity": "O(log n)",
             "space_complexity": "O(1)",
-            
         }
         
-    # If it doesn't match anything here, return None so main.py knows to keep trying
     return None
