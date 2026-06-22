@@ -41,17 +41,10 @@ client = genai.Client(api_key=api_key) if api_key else None
 
 app = FastAPI(title="Big O Analyzer API")
 
-origins = [
-    "http://localhost:5173", # For your local testing
-    "http://localhost:3000",
-    "https://big-o-calculator-bwc3zu6ap-lunas-gogoi-s-projects.vercel.app", # Your current Vercel build
-    # NOTE: If Vercel gives you a shorter, cleaner URL later (like big-o-calculator.vercel.app), add it here too!
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,   # 🚨 Use the explicit list instead of ["*"]
-    allow_credentials=False,
+    allow_origins=["*"], 
+    allow_credentials=False,  # 🚨 CHANGE THIS TO FALSE
     allow_methods=["*"],
     allow_headers=["*"],
 )
