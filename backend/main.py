@@ -140,20 +140,36 @@ async def analyze_code(submission: CodeSubmission):
             # found_results.append(analyze_floyd_warshall(root_node, submission.code))
             
             base_loop_res = analyze_base_loops(root_node)
+            valid_rules = [r for r in found_results if r is not None]
             
-            # Did a smart rule already identify a sub-linear loop?
-            has_sub_linear = any(
-                r and r["time_complexity"] in ["O(log n)", "O(log N)", "O(sqrt(n))", "O(sqrt(N))"] 
-                for r in found_results
-            )
+            # 1. Graph / Advanced Rules (BFS, DFS, DSU, Sieve)
+            has_advanced = any(r["time_complexity"] in [
+                "O(V + E)", "O(E log V)", "O(E log E)", "O(E * α(V))", "O(n log log n)"
+            ] for r in valid_rules)
             
-            # If we found a log/sqrt loop, and the generic counter is only guessing O(n), 
-            # we discard the generic guess so it doesn't overpower the smart rule!
-            if has_sub_linear and base_loop_res["time_complexity"] in ["O(N)", "O(n)"]:
-                pass # Do nothing (discard the O(n) guess)
+            # 2. Sub-linear Rules (Binary Search, Math)
+            has_sub_linear = any(r["time_complexity"] in [
+                "O(log n)", "O(log N)", "O(sqrt(n))", "O(sqrt(N))"
+            ] for r in valid_rules)
+            
+            # 3. Amortized O(n) Rules (Sliding Window, Monotonic Stack)
+            has_amortized_n = any(r["time_complexity"] in ["O(n)", "O(N)"] for r in valid_rules)
+
+            # --- DECISION TREE ---
+            if has_advanced:
+                # Graphs inherently use deep nested loops. Trust the smart rule entirely.
+                pass 
+            elif has_sub_linear and base_loop_res["time_complexity"] in ["O(n)", "O(N)"]:
+                # Protect Binary Search from the depth-1 O(n) loop counter.
+                pass 
+            elif has_amortized_n and base_loop_res["time_complexity"] in ["O(n^2)", "O(N^2)"]:
+                # Protect Sliding Window/Monotonic Stack from the depth-2 O(n^2) counter.
+                pass 
             else:
+                # If none of these specific exceptions match, the naive loop counter 
+                # has likely found genuinely unoptimized surrounding loops. Keep it!
                 found_results.append(base_loop_res)
-            
+                
             print(f"DEBUG - FOUND RESULTS: {found_results}")
             
             has_sieve = any(r and r["time_complexity"] == "O(n log log n)" for r in found_results)
@@ -182,6 +198,8 @@ async def analyze_code(submission: CodeSubmission):
                 "ai_suggestion": "AI suggestions are disabled. Please add a GEMINI_API_KEY to your .env file."
             }
 
+        # 🚨 THE FIX: Updated prompt to force structured paragraphs
+        # 🚨 THE FIX: Updated AI prompt to enforce Auxiliary Space globally
         prompt = f"""
         You are an expert algorithm analyzer. 
         Code to analyze:
@@ -190,7 +208,19 @@ async def analyze_code(submission: CodeSubmission):
         The static AST engine guessed -> Time: {static_time}, Space: {static_space}
 
         Verify if this is correct. If it is wrong (like in O(log n) tree pruning, graph algorithms, etc.), correct it.
-        Explain how the complexity was derived. If you overrode the static engine, briefly explain why.
+        
+        CRITICAL RULES:
+        1. AUXILIARY SPACE ONLY: For Space Complexity, you MUST calculate the Auxiliary Space (ignoring the input size like an existing array, matrix, or adjacency list). If the static engine mistakenly included the input data size in its space calculation, you MUST override it.
+        
+        CRITICAL FORMATTING RULE FOR THE EXPLANATION:
+        You MUST divide your 'explanation' string into exactly two sections separated by a double newline (\\n\\n). 
+        Format it exactly like this:
+        
+        Time Complexity: [Explain how the time complexity was derived]
+        
+        Space Complexity: [Explain how the auxiliary space complexity was derived]
+        
+        If you overrode the static engine's guess, gently mention why in the relevant section.
         """
 
         try:
