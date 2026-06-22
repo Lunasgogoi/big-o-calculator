@@ -1,6 +1,10 @@
+import os
+import json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from google import genai
+from dotenv import load_dotenv
 
 from core import parser as code_parser
 from rules.python.logarithmic import analyze_logarithmic as py_logarithmic
@@ -23,16 +27,30 @@ from rules.python.advanced_graphs import analyze_advanced_graphs
 from rules.python.dsu import analyze_dsu
 from rules.python.sieve import analyze_sieve
 from rules.python.backtracking import analyze_backtracking
-
 import rules.python.graph_traversal as py_graph
+from rules.python.morris_traversal import analyze_morris_traversal
 
-from core.ai_client import get_ai_suggestion
+# (Make sure to import your new graph rules here if they are in separate files!)
+# from rules.python.bellman_ford import analyze_bellman_ford
+# from rules.python.floyd_warshall import analyze_floyd_warshall
+
+# Initialize the modern GenAI client
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key) if api_key else None
 
 app = FastAPI(title="Big O Analyzer API")
 
+origins = [
+    "http://localhost:5173", # For your local testing
+    "http://localhost:3000",
+    "https://big-o-calculator-bwc3zu6ap-lunas-gogoi-s-projects.vercel.app", # Your current Vercel build
+    # NOTE: If Vercel gives you a shorter, cleaner URL later (like big-o-calculator.vercel.app), add it here too!
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=origins,   # 🚨 Use the explicit list instead of ["*"]
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,8 +60,13 @@ class CodeSubmission(BaseModel):
     code: str
     language: str = "python" 
 
-# 🚨 THE RANKING SYSTEM
-# 🚨 THE RANKING SYSTEM (Mathematically Corrected)
+# 🚨 Structured Outputs Schema
+class AIAnalysis(BaseModel):
+    time_complexity: str
+    space_complexity: str
+    explanation: str
+
+# Mathematically Corrected Ranking
 COMPLEXITY_RANKS = {
     "O(1)": 1,
     "O(log n)": 2,
@@ -60,13 +83,13 @@ COMPLEXITY_RANKS = {
     "O(n^2)": 6,
     "O(N^2)": 6,
     "O(N * M)": 6,
-    "O(E log V)": 6.5, # <--- Bumped above O(n^2)!
-    "O(E log E)": 6.5, # <--- Kruskal's bumped above O(n^2)!
+    "O(E log V)": 6.5, 
+    "O(E log E)": 6.5, 
     "O(n^3)": 7,
     "O(N^3)": 7,
     "O(V^3)": 7,
     "O(2^n)": 8,
-    "O(n!)": 9,      # <--- Add Factorial at the very bottom!
+    "O(n!)": 9,      
     "O(N!)": 9
 }
 
@@ -77,7 +100,6 @@ def get_dominant_result(results: list):
     if not valid_results:
         return {"time_complexity": "O(1)", "space_complexity": "O(1)"}
         
-    # Sort the dictionary objects based on their time_complexity rank
     return max(valid_results, key=lambda x: COMPLEXITY_RANKS[x["time_complexity"]])
 
 @app.post("/api/analyze")
@@ -94,12 +116,13 @@ async def analyze_code(submission: CodeSubmission):
             # Run C++ Pipeline (To be implemented)
             rule_results = {"time_complexity": "O(1)", "space_complexity": "O(1)"} 
         else:
-            # 🚨 THE NEW PYTHON PIPELINE: Collect ALL results!
+            # Collect ALL results
             found_results = []
             
             found_results.append(analyze_advanced_graphs(root_node, submission.code))
-            found_results.append(analyze_dsu(root_node, submission.code)) # <-- Add this!
+            found_results.append(analyze_dsu(root_node, submission.code))
             found_results.append(py_graph.analyze_graph_traversal(root_node, submission.code))
+            found_results.append(analyze_morris_traversal(root_node, submission.code))
             found_results.append(analyze_sorting_search(root_node, submission.code))
             found_results.append(analyze_sort_search(root_node, submission.code))
             found_results.append(analyze_linked_list(root_node, submission.code))
@@ -116,6 +139,11 @@ async def analyze_code(submission: CodeSubmission):
             found_results.append(analyze_built_in_iterators(root_node, submission.code))
             found_results.append(analyze_sieve(root_node, submission.code))
             found_results.append(analyze_math_loops(root_node, submission.code))
+            
+            # Uncomment if you have these functions imported:
+            # found_results.append(analyze_bellman_ford(root_node, submission.code))
+            # found_results.append(analyze_floyd_warshall(root_node, submission.code))
+            
             found_results.append(analyze_base_loops(root_node)) # The fallback loop counter
             
             print(f"DEBUG - FOUND RESULTS: {found_results}")
@@ -134,18 +162,59 @@ async def analyze_code(submission: CodeSubmission):
             rule_results["space_complexity"]
         )
         
-        # Step 3: THE AI BRAIN
-        ai_text = get_ai_suggestion(
-            code=submission.code,
-            time_complexity=rule_results["time_complexity"],
-            space_complexity=calculated_space
-        )
-        
+        # Step 3: THE AI BRAIN (Structured JSON Output System)
+        static_time = rule_results["time_complexity"]
+        static_space = calculated_space
+
+        if not client:
+            return {
+                "status": "success",
+                "time_complexity": static_time,
+                "space_complexity": static_space,
+                "ai_suggestion": "AI suggestions are disabled. Please add a GEMINI_API_KEY to your .env file."
+            }
+
+        prompt = f"""
+        You are an expert algorithm analyzer. 
+        Code to analyze:
+        {submission.code}
+
+        The static AST engine guessed -> Time: {static_time}, Space: {static_space}
+
+        Verify if this is correct. If it is wrong (like in O(log n) tree pruning, graph algorithms, etc.), correct it.
+        Explain how the complexity was derived. If you overrode the static engine, briefly explain why.
+        """
+
+        try:
+            # 🚨 Force pure JSON using response_mime_type and response_schema
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config={
+                    'response_mime_type': 'application/json',
+                    'response_schema': AIAnalysis,
+                }
+            )
+
+            # Because we forced 'application/json', there are NO markdown backticks to strip!
+            ai_data = json.loads(response.text)
+
+            # Safely extract the AI's final answers
+            final_time = ai_data.get("time_complexity", static_time)
+            final_space = ai_data.get("space_complexity", static_space)
+            final_explanation = ai_data.get("explanation", "Analysis complete.")
+
+        except Exception as e:
+            print(f"AI JSON Parse Error: {e}")
+            final_time = static_time
+            final_space = static_space
+            final_explanation = "The AI encountered an error formatting the response. Try again."
+
         return {
             "status": "success",
-            "time_complexity": rule_results["time_complexity"],
-            "space_complexity": calculated_space,
-            "ai_suggestion": ai_text
+            "time_complexity": final_time,
+            "space_complexity": final_space,
+            "ai_suggestion": final_explanation
         }
         
     except Exception as e:

@@ -1,4 +1,4 @@
-// src/components/CodeEditor.tsx
+// frontend/src/components/CodeEditor.tsx
 import EditorComponent from 'react-simple-code-editor';
 import Prism from 'prismjs';
 
@@ -19,22 +19,17 @@ export default function CodeEditor({ code, setCode, language  }: any) {
     return Prism.highlight(code, grammar, language);
   };
 
-  const placeholderText = `# Paste your code here
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n - 1) + fibonacci(n - 2)`;
+  const placeholderText = `# Paste your code here\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)`;
 
   return (
-    <div className="w-full bg-transparent font-mono text-sm relative">
+    // 🚨 FIX: Added max-h-[500px], overflow-y-auto, and custom-scrollbar
+    <div className="w-full bg-transparent font-mono text-sm relative max-h-[500px] overflow-y-auto custom-scrollbar rounded-b-md">
       <Editor
         value={code}
         onValueChange={(code: any) => setCode(code)}
         highlight={highlightCode}
         padding={14}
-
         placeholder={placeholderText}
-        
         style={{
           fontFamily: '"Fira Code", "JetBrains Mono", Consolas, monospace',
           fontSize: 14,
