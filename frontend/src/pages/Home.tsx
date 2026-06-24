@@ -35,8 +35,10 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
     setIsLoading(true);
     setResult(null);
 
-    try {
-      const response = await fetch('http://localhost:8000/api/analyze', {
+ // Use the environment variable if it exists, otherwise default to localhost
+      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      
+      const response = await fetch(`${backendUrl}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: code, language: language }), 
