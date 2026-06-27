@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import { useState } from 'react';
-import { tutorialLessons } from '../data/tutorialData.ts';
-=======
 import React, { useState, useEffect } from 'react';
 import { tutorialLessons } from '../data/tutorialData';
->>>>>>> 2f75118 (Update tutorial content)
 import CodeBlock from '../components/CodeBlock';
 import AnalysisCard from '../components/AnalysisCard';
 
