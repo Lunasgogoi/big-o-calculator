@@ -9,7 +9,7 @@ export interface Lesson {
   analysisSteps?: { label: string; text: string }[];
   proTip?: string;
   extraBlocks?: { title: string; code?: string; text?: string; complexityBadge?: string }[];
-  comparisonTable?: { headers: string[]; rows: (string | React.ReactNode)[][] };
+  comparisonTable?: { headers: string[]; rows: string[][] };
   keyTakeaway?: { title?: string; text: string[] };
 }
 
@@ -17,93 +17,140 @@ export const tutorialLessons: Lesson[] = [
   {
     id: 1,
     category: "Basics",
-    title: "Constant Time - O(1)",
-    description: "An algorithm has constant time complexity when its execution time is not dependent on the input size. No matter how large the input gets, the operation takes the exact same amount of time.",
-    codeSnippet: `function getFirstElement(array) {\n  return array[0];\n}`,
+    title: "Constant Time",
+    description: "In this lesson, you'll learn how to identify constant time complexity — operations that execute in a fixed amount of time, regardless of how large the input grows.",
+    codeSnippet: `int getFirstElement(const vector<int>& arr) {
+  return arr[0];
+}`,
     timeComplexity: "O(1)",
     spaceComplexity: "O(1)",
     analysisSteps: [
-      { label: "Array Access", text: "Looking up a specific index in an array is an instantaneous operation in memory." }
-    ],
-    extraBlocks: [
-      {
-        title: "Other O(1) Operations",
-        code: `// Math operations\nconst sum = a + b;\n\n// Object property lookup\nconst val = myObject["key"];\n\n// Variable assignment\nlet x = 10;`,
-        text: "These operations execute in a single step.",
-        complexityBadge: "O(1)"
-      }
+      { label: "Identify the input size", text: "The input is arr, and its size is n = arr.size()." },
+      { label: "Count the iterations", text: "There are no loops. The code executes exactly once." },
+      { label: "Work per execution", text: "Accessing a vector at a specific index (arr[0]) is an instantaneous operation in memory." }
     ],
     keyTakeaway: {
-      text: ["**O(1)** represents the ultimate efficiency. Whenever possible, optimize your algorithms to perform lookups in constant time using Hash Maps (Objects/Dictionaries)."]
-    }
+      title: "Conclusion",
+      text: ["An algorithm that performs the exact same number of operations regardless of input size has:", "**Time: O(1)**"]
+    },
+    extraBlocks: [
+      {
+        title: "Mathematical Operations",
+        code: `int add(int a, int b) {\n  return a + b;\n}`,
+        text: "Basic arithmetic is processed in a single CPU tick.",
+        complexityBadge: "O(1)"
+      },
+      {
+        title: "Struct Property Lookup",
+        code: `int getAge(const User& user) {\n  return user.age;\n}`,
+        text: "Finding a value by its struct property or Hash Map key is instantaneous.",
+        complexityBadge: "O(1)"
+      }
+    ]
   },
   {
     id: 2,
     category: "Basics",
-    title: "Simple Loops - O(n)",
-    description: "Linear time complexity implies that the execution time grows directly in proportion to the size of the input. If the input is 10 times larger, it takes 10 times longer.",
-    codeSnippet: `function findMax(arr) {
-  let max = arr[0];
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] > max) max = arr[i];
+    title: "Simple Loops",
+    description: "In this lesson, you'll learn how to analyze the time complexity of a single loop — the most fundamental building block of algorithm analysis.",
+    codeSnippet: `int sumArray(const vector<int>& arr) {
+  int total = 0;
+  for (int i = 0; i < arr.size(); i++) {
+    total += arr[i];
   }
-  return max;
+  return total;
 }`,
     timeComplexity: "O(n)",
     spaceComplexity: "O(1)",
     analysisSteps: [
-      { label: "The Loop", text: "The loop iterates exactly 'n' times, where 'n' is the length of the array." }
+      { label: "Identify the input size", text: "The input is arr, and its size is n = arr.size()." },
+      { label: "Count the loop iterations", text: "The for loop starts at i = 0 and increments by 1 until i < n. So it runs exactly n times." },
+      { label: "Work per iteration", text: "Inside the loop, total += arr[i] is a constant-time operation — O(1)." },
+      { label: "Multiply", text: "n iterations × O(1) per iteration = O(n)." }
     ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["A single loop that iterates through all n elements with constant work per iteration has:", "**Time: O(n)**"]
+    },
     extraBlocks: [
       {
-        title: "for...of loop",
-        code: `function countOccurrences(arr, target) {
-  let count = 0;
-  for (const item of arr) {
-    if (item === target) count++;
+        title: "While loop variant",
+        code: `int findMax(const vector<int>& arr) {
+  int max_val = arr[0];
+  int i = 1;
+  while (i < arr.size()) {
+    if (arr[i] > max_val) max_val = arr[i];
+    i++;
+  }
+  return max_val;
+}`,
+        text: "Same pattern: one pass through the array",
+        complexityBadge: "O(n)"
+      },
+      {
+        title: "Range-based for loop",
+        code: `int countOccurrences(const vector<int>& arr, int target) {
+  int count = 0;
+  for (int item : arr) {
+    if (item == target) count++;
   }
   return count;
 }`,
-        text: "Different syntax, same underlying linear complexity.",
+        text: "Different syntax, same complexity",
         complexityBadge: "O(n)"
       }
-    ],
-    proTip: "When determining Big O, we drop constants. A loop that runs 2n times is simply O(n)."
+    ]
   },
   {
     id: 3,
     category: "Basics",
-    title: "Nested Loops - O(n²)",
-    description: "Quadratic time usually occurs when you have a loop inside of another loop. For every element in the first loop, the algorithm loops through the entire input again.",
-    codeSnippet: `function hasDuplicates(array) {
-  for (let i = 0; i < array.length; i++) {
-    for (let j = i + 1; j < array.length; j++) {
-      if (array[i] === array[j]) return true;
+    title: "Nested Loops",
+    description: "In this lesson, you'll learn why putting one loop inside another creates quadratic time complexity — a common performance trap.",
+    codeSnippet: `void printAllPairs(const vector<int>& arr) {
+  for (int i = 0; i < arr.size(); i++) {
+    for (int j = 0; j < arr.size(); j++) {
+      cout << arr[i] << ", " << arr[j] << endl;
     }
   }
-  return false;
 }`,
     timeComplexity: "O(n²)",
     spaceComplexity: "O(1)",
     analysisSteps: [
-      { label: "Outer Loop", text: "Runs 'n' times." },
-      { label: "Inner Loop", text: "Runs an average of n/2 times for every iteration of the outer loop." },
-      { label: "Total", text: "n * (n/2) results in n²/2 operations. Dropping the constant gives us O(n²)." }
+      { label: "Identify the input size", text: "The input is arr, with size n." },
+      { label: "Analyze the outer loop", text: "The outer loop runs exactly n times." },
+      { label: "Analyze the inner loop", text: "For EVERY single iteration of the outer loop, the inner loop runs n times." },
+      { label: "Multiply", text: "n (outer) × n (inner) = n² operations." }
     ],
     keyTakeaway: {
-      text: ["Nested loops are a massive performance bottleneck. An input of 10,000 items requires 100,000,000 operations! Always look for ways to flatten nested loops using Sets or Hash Maps."]
+      title: "Conclusion",
+      text: ["When loops are nested and both depend on the same input size n, they multiply to create quadratic time:", "**Time: O(n²)**"]
+    },
+    extraBlocks: [
+      {
+        title: "Dependent Inner Loop (i + 1)",
+        code: `bool hasDuplicates(const vector<int>& arr) {
+  for (int i = 0; i < arr.size(); i++) {
+    for (int j = i + 1; j < arr.size(); j++) {
+      if (arr[i] == arr[j]) return true;
     }
+  }
+  return false;
+}`,
+        text: "Inner loop runs fewer times (n/2 on average). However, we drop constants in Big O. n × (n/2) = n²/2.",
+        complexityBadge: "O(n²)"
+      }
+    ]
   },
   {
     id: 4,
     category: "Intermediate",
-    title: "Logarithmic Patterns - O(log n)",
-    description: "Logarithmic time occurs when an algorithm consistently cuts the input size in half. It is incredibly efficient for large datasets.",
-    codeSnippet: `function binarySearch(arr, target) {
-  let left = 0, right = arr.length - 1;
+    title: "Logarithmic Patterns",
+    description: "In this lesson, you'll learn how algorithms that repeatedly divide the search space in half achieve highly efficient O(log n) complexity.",
+    codeSnippet: `int binarySearch(const vector<int>& arr, int target) {
+  int left = 0, right = arr.size() - 1;
   while (left <= right) {
-    let mid = Math.floor((left + right) / 2);
-    if (arr[mid] === target) return mid;
+    int mid = left + (right - left) / 2;
+    if (arr[mid] == target) return mid;
     if (arr[mid] < target) left = mid + 1;
     else right = mid - 1;
   }
@@ -112,66 +159,94 @@ export const tutorialLessons: Lesson[] = [
     timeComplexity: "O(log n)",
     spaceComplexity: "O(1)",
     analysisSteps: [
-      { label: "The Divide", text: "Every iteration, the searchable portion of the array is cut exactly in half." }
+      { label: "Identify the pattern", text: "With every iteration of the while loop, 'left' and 'right' converge, cutting the remaining searchable array exactly in half." },
+      { label: "Count the iterations", text: "If an array has 16 items, it takes at most 4 divisions (16 → 8 → 4 → 2 → 1) to find the answer." },
+      { label: "Apply the math", text: "The number of times you can divide n by 2 is defined mathematically as log₂(n)." }
     ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["Any algorithm that consistently divides the remaining data in half (or multiplies a counter by a constant) has:", "**Time: O(log n)**"]
+    },
     extraBlocks: [
       {
-        title: "Mathematical Halving",
-        code: `let count = 0;\nfor (let i = n; i > 1; i /= 2) {\n  count++;\n}`,
-        text: "Any loop that increments by multiplying or dividing by a constant factor is Logarithmic.",
+        title: "Multiplicative Loops",
+        code: `int count = 0;
+for (int i = 1; i < n; i *= 2) {
+  count++;
+}`,
+        text: "Because i doubles every step, it reaches n logarithmically.",
         complexityBadge: "O(log n)"
       }
-    ],
-    proTip: "If you have 1,000,000 items, an O(n) algorithm takes 1,000,000 steps. An O(log n) algorithm takes just 20 steps!"
+    ]
   },
   {
     id: 5,
     category: "Basics",
     title: "Combining Steps",
-    description: "When calculating complexity, sequential blocks of code are added together. However, you must be careful about using the same variables for different inputs.",
-    codeSnippet: `function processItems(arrA, arrB) {
+    description: "In this lesson, you'll learn how to calculate total time complexity when an algorithm consists of multiple sequential steps or loops.",
+    codeSnippet: `void processData(const vector<int>& arr) {
   // Step 1
-  for (let i = 0; i < arrA.length; i++) {
-    console.log(arrA[i]);
+  for (int i = 0; i < arr.size(); i++) {
+    cout << arr[i] << endl;
   }
+  
   // Step 2
-  for (let j = 0; j < arrB.length; j++) {
-    console.log(arrB[j]);
+  for (int j = 0; j < arr.size(); j++) {
+    cout << arr[j] << endl;
   }
 }`,
-    timeComplexity: "O(a + b)",
+    timeComplexity: "O(n)",
     spaceComplexity: "O(1)",
     analysisSteps: [
-      { label: "First Loop", text: "Runs 'a' times based on the length of arrA." },
-      { label: "Second Loop", text: "Runs 'b' times based on the length of arrB." }
+      { label: "Analyze Step 1", text: "The first loop runs n times: O(n)." },
+      { label: "Analyze Step 2", text: "The second loop runs n times: O(n)." },
+      { label: "Combine sequentially", text: "Because the loops are sequential (one after another), we add them: O(n) + O(n) = O(2n)." },
+      { label: "Drop Constants", text: "In Big O notation, we ignore constants. O(2n) simplifies to O(n)." }
     ],
     keyTakeaway: {
-      text: [
-        "**Rule of Addition:** If your algorithm is in the form 'do this, then when you are all done, do that', you add the runtimes.",
-        "**Different Inputs:** Do NOT say O(n) for the code above! Because the arrays could be different sizes, you must represent them with different variables: O(a + b)."
-      ]
-    }
+      title: "Conclusion",
+      text: ["Sequential loops are ADDED, not multiplied. Two linear passes still result in:", "**Time: O(n)**"]
+    },
+    extraBlocks: [
+      {
+        title: "Different Inputs = Different Variables",
+        code: `void merge(const vector<int>& arrA, const vector<int>& arrB) {
+  for (int i = 0; i < arrA.size(); i++) { /*...*/ }
+  for (int j = 0; j < arrB.size(); j++) { /*...*/ }
+}`,
+        text: "Because arrA and arrB can be different sizes, we cannot combine them into 'n'.",
+        complexityBadge: "O(a + b)"
+      }
+    ]
   },
   {
     id: 6,
     category: "Intermediate",
     title: "Recursion",
-    description: "Recursive algorithms call themselves. Their time complexity is determined by the number of function calls, and their space complexity is determined by the maximum depth of the call stack.",
-    codeSnippet: `function factorial(n) {
+    description: "In this lesson, you'll learn how to determine the complexity of recursive functions by analyzing the call tree and stack depth.",
+    codeSnippet: `int factorial(int n) {
   if (n <= 1) return 1;
   return n * factorial(n - 1);
 }`,
     timeComplexity: "O(n)",
     spaceComplexity: "O(n)",
     analysisSteps: [
-      { label: "Time", text: "The function calls itself 'n' times." },
-      { label: "Space", text: "It pushes 'n' frames onto the memory call stack before returning, requiring O(n) space." }
+      { label: "Identify the base case", text: "The recursion stops when n <= 1." },
+      { label: "Count the function calls", text: "To calculate factorial(5), it must call factorial(4), then 3, then 2, then 1. That is exactly n calls." },
+      { label: "Analyze memory (Space)", text: "Each function call must wait for the next one to finish, meaning n frames are pushed onto the Call Stack in memory." }
     ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["A recursive function that calls itself once per level, reducing n by 1 each time, has:", "**Time: O(n) | Space: O(n)**"]
+    },
     extraBlocks: [
       {
-        title: "Multiple Branches (Danger!)",
-        code: `function fibonacci(n) {\n  if (n <= 1) return n;\n  return fibonacci(n - 1) + fibonacci(n - 2);\n}`,
-        text: "Because it branches twice per call, the tree grows exponentially.",
+        title: "Exponential Recursion (Branching)",
+        code: `int fibonacci(int n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}`,
+        text: "Because the function branches TWO times per call, the tree doubles at every level.",
         complexityBadge: "O(2ⁿ)"
       }
     ]
@@ -180,141 +255,174 @@ export const tutorialLessons: Lesson[] = [
     id: 7,
     category: "Advanced",
     title: "Divide & Conquer",
-    description: "Algorithms like Merge Sort recursively divide the input into smaller chunks, process them, and merge them back together.",
+    description: "In this lesson, you'll learn how algorithms like Merge Sort split inputs and merge them back together to achieve the fastest possible comparison sort time.",
     codeSnippet: `// Merge Sort Conceptual Paradigm
-function mergeSort(arr) {
-  if (arr.length <= 1) return arr;
+void mergeSort(vector<int>& arr, int left, int right) {
+  if (left >= right) return;
   
-  const mid = Math.floor(arr.length / 2);
-  const left = mergeSort(arr.slice(0, mid));
-  const right = mergeSort(arr.slice(mid));
+  int mid = left + (right - left) / 2;
   
-  return merge(left, right);
+  // Recursively divide
+  mergeSort(arr, left, mid);
+  mergeSort(arr, mid + 1, right);
+  
+  // Linear merge step
+  merge(arr, left, mid, right);
 }`,
     timeComplexity: "O(n log n)",
     spaceComplexity: "O(n)",
     analysisSteps: [
-      { label: "Division", text: "Splitting the array in half takes O(log n) recursive levels." },
-      { label: "Merging", text: "At each of those log(n) levels, merging the sub-arrays takes O(n) time." }
+      { label: "The Divide Phase", text: "The array is recursively split in half until chunks are size 1. Splitting takes O(log n) levels." },
+      { label: "The Merge Phase", text: "At every single level of the tree, the merge() helper function iterates through all n elements to combine them." },
+      { label: "Combine", text: "n work per level × log(n) levels = O(n log n)." }
     ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["Algorithms that recursively divide data in half AND do linear work to reassemble it have:", "**Time: O(n log n)**"]
+    },
     proTip: "O(n log n) is mathematically the fastest possible worst-case time complexity for any comparison-based sorting algorithm."
   },
   {
     id: 8,
     category: "Intermediate",
     title: "Best, Average & Worst Case",
-    description: "Algorithms can perform differently depending on how the input data is arranged. We usually care most about the Worst Case (Big O).",
-    codeSnippet: `function linearSearch(arr, target) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === target) return i;
+    description: "In this lesson, you'll learn why algorithms can perform differently depending on the exact arrangement of the input data.",
+    codeSnippet: `int findTarget(const vector<int>& arr, int target) {
+  for (int i = 0; i < arr.size(); i++) {
+    if (arr[i] == target) return i;
   }
   return -1;
 }`,
     timeComplexity: "O(n) Worst / O(1) Best",
     spaceComplexity: "O(1)",
-    comparisonTable: {
-      headers: ["Scenario", "Notation", "Complexity", "Why?"],
-      rows: [
-        ["Best Case", "Omega (Ω)", "O(1)", "Target is the very first item."],
-        ["Average Case", "Theta (Θ)", "O(n/2) → O(n)", "Target is somewhere in the middle."],
-        ["Worst Case", "Big O (O)", "O(n)", "Target is at the end, or doesn't exist."]
-      ]
-    },
+    analysisSteps: [
+      { label: "Best Case (Ω)", text: "If the target is the very first element, the loop runs exactly once. Time is O(1)." },
+      { label: "Average Case (Θ)", text: "On average, the target is in the middle. The loop runs n/2 times. Dropping constants, time is O(n)." },
+      { label: "Worst Case (O)", text: "If the target is at the very end (or not there at all), the loop must check every single item. Time is O(n)." }
+    ],
     keyTakeaway: {
-      title: "Why focus on Big O?",
-      text: ["In industry, we design systems to survive the worst possible scenarios to prevent crashes and timeouts under heavy load. That's why Big O (Worst Case) is the industry standard metric."]
-    }
+      title: "Why do we care about Worst Case?",
+      text: ["In industry software engineering, we design systems to survive the worst possible scenarios to prevent servers from crashing under heavy load. That's why Big O (Worst Case) is the standard."]
+    },
+    extraBlocks: [
+      {
+        title: "Insertion Sort Example",
+        code: `// Best Case: Array is already sorted -> O(n)\n// Worst Case: Array is in reverse order -> O(n²)`
+      }
+    ]
   },
   {
     id: 9,
     category: "Advanced",
     title: "Dynamic Programming (1D)",
-    description: "Dynamic programming solves complex problems by breaking them down into overlapping subproblems and caching the results (Memoization).",
-    codeSnippet: `function climbStairs(n, memo = {}) {
-  if (n <= 2) return n;
+    description: "In this lesson, you'll learn how caching (memoization) reduces exponential recursive time complexities to highly efficient linear time.",
+    codeSnippet: `int fibonacciMemo(int n, unordered_map<int, int>& memo) {
+  if (n <= 1) return n;
   
-  // Return cached result if we've seen it before
-  if (memo[n]) return memo[n];
+  // Check the cache first!
+  if (memo.find(n) != memo.end()) return memo[n];
   
-  // Calculate and store in cache
-  memo[n] = climbStairs(n - 1, memo) + climbStairs(n - 2, memo);
+  // Do the work, but save it for later
+  memo[n] = fibonacciMemo(n - 1, memo) + fibonacciMemo(n - 2, memo);
   return memo[n];
 }`,
     timeComplexity: "O(n)",
     spaceComplexity: "O(n)",
     analysisSteps: [
-      { label: "Without Memoization", text: "This would branch like Fibonacci, taking O(2ⁿ) time." },
-      { label: "With Memoization", text: "We only calculate each step once, dropping the time down to O(n)." }
-    ]
+      { label: "Identify overlapping subproblems", text: "Without the memo object, fib(5) calculates fib(3) twice, fib(2) three times, etc. This causes an O(2ⁿ) explosion." },
+      { label: "Analyze the Cache", text: "Because we save every result in 'memo', we only ever calculate each number from 1 to n exactly ONE time." },
+      { label: "Calculate Space", text: "The Call Stack goes n levels deep, AND the memo object stores n keys. O(n) + O(n) = O(n) space." }
+    ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["By trading memory (a cache) for time, we turned an algorithm that would take millions of years for n=100 into one that runs instantly:", "**Time: O(n)**"]
+    }
   },
   {
     id: 10,
     category: "Advanced",
     title: "Dynamic Programming (2D)",
-    description: "Similar to 1D DP, but applied to 2D grids, matrices, or problems with two shifting variables (like Longest Common Subsequence).",
-    codeSnippet: `function gridTraveler(m, n, memo = {}) {
-  const key = m + ',' + n;
-  if (key in memo) return memo[key];
-  if (m === 1 && n === 1) return 1;
-  if (m === 0 || n === 0) return 0;
+    description: "In this lesson, you'll learn how to analyze algorithms that fill a 2D grid or evaluate two shifting variables.",
+    codeSnippet: `int gridTraveler(int m, int n, vector<vector<int>>& memo) {
+  // Base cases
+  if (m == 1 && n == 1) return 1;
+  if (m == 0 || n == 0) return 0;
   
-  memo[key] = gridTraveler(m - 1, n, memo) + gridTraveler(m, n - 1, memo);
-  return memo[key];
+  // Return cached result
+  if (memo[m][n] != -1) return memo[m][n];
+  
+  // Recursively travel down and right
+  memo[m][n] = gridTraveler(m - 1, n, memo) + gridTraveler(m, n - 1, memo);
+  return memo[m][n];
 }`,
     timeComplexity: "O(m * n)",
-    spaceComplexity: "O(m + n)",
+    spaceComplexity: "O(m * n)",
     analysisSteps: [
-      { label: "Combinations", text: "We only ever calculate each unique grid state (m, n) exactly once." },
-      { label: "Space", text: "The call stack depth maxes out at m + n." }
-    ]
+      { label: "Identify combinations", text: "The variables 'm' and 'n' change on every recursive call." },
+      { label: "Count total unique states", text: "If m=3 and n=3, the maximum number of unique grid coordinates we can calculate is 3 × 3 = 9." },
+      { label: "Work per state", text: "Checking the memo and adding two numbers together takes O(1) time." }
+    ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["Because memoization ensures we only calculate each grid coordinate exactly once, the time complexity is the area of the grid:", "**Time: O(m × n)**"]
+    }
   },
   {
     id: 11,
     category: "Advanced",
     title: "Tree Traversal",
-    description: "Visiting every node in a tree data structure. The complexity depends on whether the tree is balanced.",
+    description: "In this lesson, you'll learn why visiting every node in a tree structure takes linear time, and how the tree's balance affects space complexity.",
+    codeSnippet: `struct TreeNode {
+  int val;
+  TreeNode* left;
+  TreeNode* right;
+};
+
+void dfsInorder(TreeNode* root) {
+  if (root == nullptr) return;
+  
+  dfsInorder(root->left);
+  cout << root->val << endl;
+  dfsInorder(root->right);
+}`,
+    timeComplexity: "O(n)",
+    spaceComplexity: "O(h)",
+    analysisSteps: [
+      { label: "Time: Count Node Visits", text: "The definition of traversing a tree means visiting every single node. If there are n nodes, we do n operations. Time is always O(n)." },
+      { label: "Space: Call Stack Depth", text: "The maximum memory used is determined by how deep the recursion goes. The depth of a tree is called its height (h)." }
+    ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["Tree traversal time is always linear. The space depends entirely on the height (h) of the tree:", "**Time: O(n) | Space: O(h)**"]
+    },
     extraBlocks: [
       {
-        title: "Depth First Search (DFS)",
-        code: `function inorder(root) {
-  if (!root) return;
-  inorder(root.left);
-  console.log(root.val);
-  inorder(root.right);
-}`,
-        complexityBadge: "O(n) Time | O(h) Space"
+        title: "Balanced vs Unbalanced Trees",
+        code: `// Balanced Tree: h = log(n) -> O(log n) space
+// Unbalanced Tree (Line): h = n -> O(n) space`
       }
-    ],
-    comparisonTable: {
-      headers: ["Traversal Type", "Time", "Space (Balanced)", "Space (Worst)"],
-      rows: [
-        ["DFS (In/Pre/Post)", "O(n)", "O(log n)", "O(n) (Linked List)"],
-        ["BFS (Level Order)", "O(n)", "O(n/2) → O(n)", "O(1) (Linked List)"]
-      ]
-    },
-    keyTakeaway: {
-      text: [
-        "Time is always **O(n)** because you must visit every node.",
-        "Space complexity is determined by the height of the tree **O(h)**. In a perfectly balanced tree, h = log(n). In a completely unbalanced tree (a straight line), h = n."
-      ]
-    }
+    ]
   },
   {
     id: 12,
     category: "Advanced",
     title: "Graph Traversal",
-    description: "Unlike trees, graphs can have cycles. If you don't keep track of the nodes you've visited, you will get stuck in an infinite loop.",
-    codeSnippet: `function bfsGraph(graph, startNode) {
-  const queue = [startNode];
-  const visited = new Set([startNode]); // Crucial for graphs!
+    description: "In this lesson, you'll learn how graph algorithms depend on both the number of Vertices (V) and Edges (E).",
+    codeSnippet: `void bfs(const vector<vector<int>>& graph, int start) {
+  queue<int> q;
+  unordered_set<int> visited; // Crucial for graphs!
   
-  while (queue.length > 0) {
-    const node = queue.shift();
+  q.push(start);
+  visited.insert(start);
+  
+  while (!q.empty()) {
+    int node = q.front();
+    q.pop();
     
-    for (let neighbor of graph[node]) {
-      if (!visited.has(neighbor)) {
-        visited.add(neighbor);
-        queue.push(neighbor);
+    for (int neighbor : graph[node]) {
+      if (visited.find(neighbor) == visited.end()) {
+        visited.insert(neighbor);
+        q.push(neighbor);
       }
     }
   }
@@ -322,50 +430,68 @@ function mergeSort(arr) {
     timeComplexity: "O(V + E)",
     spaceComplexity: "O(V)",
     analysisSteps: [
-      { label: "V = Vertices", text: "We add and remove every node (vertex) from the queue exactly once." },
-      { label: "E = Edges", text: "We iterate through every edge (connection) in the adjacency list exactly once." }
-    ]
+      { label: "V = Vertices", text: "The while loop ensures that every node (Vertex) is added to and removed from the queue exactly once." },
+      { label: "E = Edges", text: "The inner for loop iterates over every connection (Edge) originating from the current node." },
+      { label: "Combine", text: "Because we process all V vertices, and across all those vertices we check all E edges, the total time is V + E." }
+    ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["Graph algorithms process every node and every connection:", "**Time: O(V + E)**"]
+    }
   },
   {
     id: 13,
     category: "Advanced",
     title: "Amortized Analysis",
-    description: "Amortized time is the average time taken per operation over a sequence of operations, smoothing out rare, expensive spikes.",
-    codeSnippet: `const array = [];
-for (let i = 0; i < 100; i++) {
-  // Most pushes are instantaneous O(1)
-  // Occasionally, memory fills up and the array must be resized O(n)
-  array.push(i); 
+    description: "In this lesson, you'll learn how to average out rare, expensive operations over a long sequence of cheap operations.",
+    codeSnippet: `vector<int> dynamicArray;
+for (int i = 0; i < 1000; i++) {
+  // Usually this takes O(1) time.
+  // When memory runs out, vector resizes taking O(n) time.
+  dynamicArray.push_back(i);
 }`,
     timeComplexity: "O(1) Amortized",
     spaceComplexity: "O(n)",
+    analysisSteps: [
+      { label: "The Cheap Operation", text: "99% of the time, pushing an item to the end of a vector is instant: O(1)." },
+      { label: "The Expensive Operation", text: "When the vector fills up, C++ allocates a new chunk of memory double the size and copies all elements over: O(n)." },
+      { label: "The Average", text: "Because the vector doubles, the expensive operation happens less and less frequently. The O(n) cost is 'spread out' over the many O(1) pushes." }
+    ],
     keyTakeaway: {
-      text: [
-        "When an array runs out of memory, it allocates a new block of memory double the size, and copies all old elements over. That single step is O(n).",
-        "However, because the array doubled in size, it will be a VERY long time before it needs to resize again. Averaged out, `push()` is considered an **O(1)** operation."
-      ]
+      title: "Conclusion",
+      text: ["When an expensive operation is mathematically rare enough, the overall average remains constant:", "**Time: O(1) Amortized**"]
     }
   },
   {
     id: 14,
     category: "Intermediate",
     title: "Data Structure Complexity",
-    description: "Choosing the right data structure changes the Big O of your operations drastically.",
+    description: "In this lesson, you'll learn why choosing the right data structure changes the Big O of your operations drastically.",
     extraBlocks: [
       {
-        title: "Array",
-        code: `const arr = [10, 20, 30];\narr.unshift(5); // O(n) - shifts all elements right\narr[2];         // O(1) - instant index access`
+        title: "C++ Vector (Array)",
+        code: `vector<int> arr = {10, 20, 30, 40, 50};
+
+arr[2];                      // Access by index -> O(1)
+arr.push_back(60);           // Append -> O(1) amortized
+arr.insert(arr.begin(), 5);  // Prepend -> O(n) (shifts all)
+arr.erase(arr.begin() + 2);  // Delete middle -> O(n)`
       },
       {
         title: "Linked List",
-        code: `// head -> 10 -> 20 -> 30\n// Accessing index 2 requires traversing from the head.\n// Prepending is instant (just update the head pointer).`
+        code: `// head -> 10 -> 20 -> 30 -> 40 -> 50
+
+// Access by index -> O(n) (must traverse)
+// Prepend -> O(1) (update head pointer)
+// Delete at known node -> O(1)
+// Search -> O(n) (must traverse)`
       }
     ],
     comparisonTable: {
       headers: ["Operation", "Array", "Linked List", "Hash Map"],
       rows: [
         ["Access by index", "O(1)", "O(n)", "—"],
-        ["Search / Contains", "O(n)", "O(n)", "O(1) avg"],
+        ["Search", "O(n)", "O(n)", "O(1) avg"],
         ["Insert at start", "O(n)", "O(1)", "—"],
         ["Insert at end", "O(1)*", "O(n)**", "O(1)*"],
         ["Delete", "O(n)", "O(1)***", "O(1) avg"]
@@ -378,74 +504,88 @@ for (let i = 0; i < 100; i++) {
         "**Hash Map** is best when you need fast lookups by key."
       ]
     },
-    proTip: "* Amortized. ** O(1) if you maintain a tail pointer. *** If you already have a reference to the node."
+    proTip: "* Amortized. ** O(1) with tail pointer. *** If you have a reference to the node."
   },
   {
     id: 15,
     category: "Basics",
     title: "Space Complexity",
-    description: "Space complexity measures the total amount of extra memory an algorithm requires to run as the input size grows.",
+    description: "In this lesson, you'll learn how to measure the extra memory an algorithm requires as the input size grows.",
+    codeSnippet: `vector<int> copyArray(const vector<int>& arr) {
+  vector<int> copy; // Extra memory allocated!
+  for (int i = 0; i < arr.size(); i++) {
+    copy.push_back(arr[i]);
+  }
+  return copy;
+}`,
+    timeComplexity: "O(n)",
+    spaceComplexity: "O(n)",
+    analysisSteps: [
+      { label: "Identify Input Variables", text: "The 'arr' passed into the function by reference does not count towards extra space." },
+      { label: "Identify New Allocations", text: "The 'copy' vector grows directly in proportion to the input vector." },
+      { label: "Calculate", text: "Because we create 1 new element for every 1 element in the input, the space scales linearly." }
+    ],
+    keyTakeaway: {
+      title: "Conclusion",
+      text: ["Creating new arrays, strings, or hash maps proportional to the input size results in:", "**Space: O(n)**"]
+    },
     extraBlocks: [
       {
-        title: "O(1) Space - In-Place",
-        code: `function reverseInPlace(arr) {
-  let left = 0, right = arr.length - 1;
+        title: "In-Place Modification (O(1) Space)",
+        code: `void reverseInPlace(vector<int>& arr) {
+  int left = 0, right = arr.size() - 1;
   while(left < right) {
-    let temp = arr[left];
+    int temp = arr[left];
     arr[left++] = arr[right];
     arr[right--] = temp;
   }
 }`,
-        text: "Uses only 3 integer variables, regardless of array size.",
-        complexityBadge: "O(1)"
-      },
-      {
-        title: "O(n) Space - Extra Allocation",
-        code: `function copyArray(arr) {
-  const newArr = [];
-  for(let i=0; i<arr.length; i++) newArr.push(arr[i]);
-  return newArr;
-}`,
-        text: "Creates a brand new array of the same size as the input.",
-        complexityBadge: "O(n)"
+        text: "We only use 3 integer variables (left, right, temp) regardless of how large the array gets.",
+        complexityBadge: "O(1) Space"
       }
-    ],
-    proTip: "Modifying inputs directly (in-place) saves space, but is often considered bad practice in functional programming. Trade-offs matter!"
+    ]
   },
   {
     id: 16,
     category: "Advanced",
     title: "Memoization & Optimization",
-    description: "In algorithmic interviews, you can almost always trade space for time. Using additional memory (like a Hash Map) allows you to avoid nested loops.",
-    extraBlocks: [
-      {
-        title: "Brute Force Two Sum",
-        code: `function twoSum(nums, target) {
-  for (let i = 0; i < nums.length; i++) {
-    for (let j = i + 1; j < nums.length; j++) {
-      if (nums[i] + nums[j] === target) return [i, j];
+    description: "In this lesson, you'll learn the ultimate coding interview technique: trading Space for Time using Hash Maps.",
+    codeSnippet: `// Problem: Find two numbers in array that add up to target.
+
+// BAD: O(n²) Time
+vector<int> twoSumBruteForce(const vector<int>& nums, int target) {
+  for (int i = 0; i < nums.size(); i++) {
+    for (int j = i + 1; j < nums.size(); j++) {
+      if (nums[i] + nums[j] == target) return {i, j};
     }
   }
+  return {};
 }`,
-        complexityBadge: "Time: O(n²) | Space: O(1)"
-      },
+    extraBlocks: [
       {
-        title: "Optimized Two Sum",
-        code: `function twoSumOptimized(nums, target) {
-  const map = new Map();
-  for (let i = 0; i < nums.length; i++) {
-    const needed = target - nums[i];
-    if (map.has(needed)) return [map.get(needed), i];
-    map.set(nums[i], i);
+        title: "Optimized Solution",
+        code: `// GOOD: O(n) Time | O(n) Space
+vector<int> twoSumOptimized(const vector<int>& nums, int target) {
+  unordered_map<int, int> map;
+  for (int i = 0; i < nums.size(); i++) {
+    int needed = target - nums[i];
+    
+    // O(1) Instant Lookup!
+    if (map.find(needed) != map.end()) return {map[needed], i};
+    
+    map[nums[i]] = i;
   }
+  return {};
 }`,
-        complexityBadge: "Time: O(n) | Space: O(n)"
+        text: "By caching elements we've seen, we avoid looping twice.",
+        complexityBadge: "O(n) Time"
       }
     ],
     keyTakeaway: {
+      title: "The Golden Rule of Algorithms",
       text: [
-        "If you have an **O(n²)** algorithm, always ask yourself: *'Can I use a Hash Map to make this O(n)?'* The answer is usually yes.",
-        "By storing elements we've already seen in a Hash Map, we turn an O(n) inner loop into an O(1) lookup."
+        "If you have an **O(n²)** algorithm involving nested loops, always ask yourself: *'Can I use a Hash Map to make this O(n)?'*",
+        "By storing elements in memory as you iterate, you turn an O(n) inner loop into an O(1) lookup."
       ]
     }
   }
