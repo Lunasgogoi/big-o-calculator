@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { tutorialLessons } from '../data/tutorialData';
 import CodeBlock from '../components/CodeBlock';
 import AnalysisCard from '../components/AnalysisCard';
