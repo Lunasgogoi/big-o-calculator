@@ -10,9 +10,20 @@ import 'prismjs/components/prism-cpp';
 import 'prismjs/themes/prism-tomorrow.css';
 
 // 🐛 THE FIX: Safely extract the component for Vite
-const Editor = (EditorComponent as any).default || EditorComponent;
+type EditorModule = typeof EditorComponent & {
+  default?: typeof EditorComponent;
+};
 
-export default function CodeEditor({ code, setCode, language  }: any) {
+interface CodeEditorProps {
+  code: string;
+  setCode: (code: string) => void;
+  language: string;
+}
+
+const editorModule = EditorComponent as EditorModule;
+const Editor = editorModule.default ?? EditorComponent;
+
+export default function CodeEditor({ code, setCode, language }: CodeEditorProps) {
   
   const highlightCode = (code: string) => {
     const grammar = Prism.languages[language] || Prism.languages.javascript;
@@ -26,7 +37,7 @@ export default function CodeEditor({ code, setCode, language  }: any) {
     <div className="w-full bg-transparent font-mono text-sm relative max-h-[500px] overflow-y-auto custom-scrollbar rounded-b-md">
       <Editor
         value={code}
-        onValueChange={(code: any) => setCode(code)}
+        onValueChange={setCode}
         highlight={highlightCode}
         padding={14}
         placeholder={placeholderText}

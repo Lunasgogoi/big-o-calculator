@@ -1,4 +1,24 @@
-export default function CodeExample({ title, badgeTitle, lightBg, lightText, darkBg, darkText, code, explanation }: any) {
+interface CodeExampleProps {
+  title: string;
+  badgeTitle: string;
+  lightBg: string;
+  lightText: string;
+  darkBg: string;
+  darkText: string;
+  code: string;
+  explanation: string;
+}
+
+export default function CodeExample({
+  title,
+  badgeTitle,
+  lightBg,
+  lightText,
+  darkBg,
+  darkText,
+  code,
+  explanation,
+}: CodeExampleProps) {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-2">

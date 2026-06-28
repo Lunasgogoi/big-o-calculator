@@ -1,7 +1,15 @@
 // src/components/Navbar.tsx
 import { Link } from 'react-router-dom';
+import type { Dispatch, SetStateAction } from 'react';
 
-export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage }: any) {
+interface NavbarProps {
+  isDarkMode: boolean;
+  setIsDarkMode: Dispatch<SetStateAction<boolean>>;
+  setCode: (code: string) => void;
+  setLanguage: (language: string) => void;
+}
+
+export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage }: NavbarProps) {
   return (
     // We update the nav styling for the bottom border and correct padding
     <nav className="w-full max-w-4xl flex justify-between items-center pt-6 pb-6 border-b border-gray-100 dark:border-gray-800 mb-8 transition-colors duration-300">

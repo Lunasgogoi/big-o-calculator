@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/pages/Home.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -7,20 +6,13 @@ import CodeExample from '../components/CodeExample';
 import ResultPanel from '../components/ResultPanel';
 import CodeEditor from '../components/CodeEditor';
 import toast from 'react-hot-toast';
+import type { AnalysisResult } from '../components/ResultPanel';
 
 interface HomeProps {
   code: string;
   setCode: (code: string) => void;
   language: string;
   setLanguage: (lang: string) => void;
-}
-
-interface AnalysisResult {
-  status: string;
-  time_complexity: string;
-  space_complexity: string;
-  analysis_steps?: string[]; 
-  ai_suggestion: string;
 }
 
 export default function Home({ code, setCode, language, setLanguage }: HomeProps) {
@@ -46,7 +38,7 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         body: JSON.stringify({ code: code, language: language }), 
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as Partial<AnalysisResult> & { detail?: string };
 
       if (!response.ok) {
         if (response.status === 429) { 
@@ -55,12 +47,13 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         throw new Error(data.detail || "Failed to analyze code.");
       }
 
-      setResult(data); 
+      setResult(data as AnalysisResult); 
       toast.success("Analysis complete!");
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      toast.error(err.message || "An unexpected error occurred. Is the server running?");
+      const message = err instanceof Error ? err.message : "An unexpected error occurred. Is the server running?";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

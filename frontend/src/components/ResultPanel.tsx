@@ -1,6 +1,18 @@
 // src/components/ResultPanel.tsx
 
-export default function ResultPanel({ result }: any) {
+export interface AnalysisResult {
+  status: string;
+  time_complexity: string;
+  space_complexity: string;
+  analysis_steps?: string[];
+  ai_suggestion: string;
+}
+
+interface ResultPanelProps {
+  result: AnalysisResult;
+}
+
+export default function ResultPanel({ result }: ResultPanelProps) {
   return (
     <div className="border border-teal-500/50 rounded-xl p-8 bg-white dark:bg-[#121212] mb-20 shadow-lg transition-colors duration-300">
       <h3 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">Analysis Results</h3>

@@ -43,7 +43,7 @@ export default function App() {
         />
 
         {/* The Navbar stays at the top of EVERY page */}
-        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCode={setCode} setLanguage={setlanguage} language={language} />
+        <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCode={setCode} setLanguage={setlanguage} />
 
         {/* Our routing logic is now safely tucked away in its own file! */}
         <main className="w-full max-w-4xl flex-grow">
