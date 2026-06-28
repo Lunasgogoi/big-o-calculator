@@ -15,6 +15,21 @@ def count_recursive_calls(node, func_name, code_bytes):
         
     return count
 
+
+def has_tree_child_access(node, code_bytes):
+    """Detects recursive tree traversal patterns such as node.left / node.right."""
+    if node.type == 'attribute':
+        attr_text = code_bytes[node.start_byte:node.end_byte].decode('utf8').lower()
+        if attr_text.endswith('.left') or attr_text.endswith('.right'):
+            return True
+
+    for child in node.children:
+        if has_tree_child_access(child, code_bytes):
+            return True
+
+    return False
+
+
 def analyze_recursion(root_node, raw_code):
     """Distinguishes between Linear O(n), Branching O(2^n), and Divide & Conquer O(n log n)."""
     code_bytes = bytes(raw_code, "utf8")
@@ -29,6 +44,9 @@ def analyze_recursion(root_node, raw_code):
             if not body_node: continue
             
             calls = count_recursive_calls(body_node, func_name, code_bytes)
+
+            if calls > 0 and has_tree_child_access(body_node, code_bytes):
+                return {"time_complexity": "O(n)", "space_complexity": "O(h)"}
             
             if calls == 1:
                 return {"time_complexity": "O(n)", "space_complexity": "O(n)"}

@@ -5,10 +5,10 @@ import { examplesData } from '../data/examplesData';
 
 const getBadgeStyles = (color: string) => {
   switch (color) {
-    case 'green': return 'bg-green-50 text-green-600 border-green-200 dark:bg-green-900/30 dark:text-green-500 dark:border-green-900/50';
-    case 'orange': return 'bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-900/30 dark:text-orange-500 dark:border-orange-900/50';
-    case 'red': return 'bg-red-50 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-500 dark:border-red-900/50';
-    case 'blue': return 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/30 dark:text-blue-500 dark:border-blue-900/50';
+    case 'green': return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900/60';
+    case 'orange': return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/60';
+    case 'red': return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/60';
+    case 'blue': return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/60';
     default: return 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
   }
 };
@@ -30,12 +30,12 @@ export default function Examples() {
           
           <div className="flex flex-col gap-8">
             {category.examples?.map((algo) => (
-              <div key={algo.id} className="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none">
+              <div key={algo.id} className="min-w-0 border border-gray-200 dark:border-gray-800 rounded-lg p-6 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none">
                 <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{algo.title}</h3>
                 
                 <div className="flex flex-wrap gap-3 mb-5 text-sm font-bold">
                   {algo.badges.map((badge, bIndex) => (
-                    <span key={bIndex} className={`px-3 py-1 rounded-full border ${getBadgeStyles(badge.color)}`}>
+                    <span key={bIndex} className={`px-2.5 py-1 rounded-md border ${getBadgeStyles(badge.color)}`}>
                       {badge.label}: {badge.value}
                     </span>
                   ))}
@@ -45,8 +45,8 @@ export default function Examples() {
                   <p className="text-gray-600 dark:text-gray-400 mb-6">{algo.description}</p>
                 )}
 
-                <div className="bg-gray-50 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-800 rounded-xl p-4 mb-5">
-                  <pre className="text-sm font-mono text-gray-800 dark:text-gray-300 overflow-x-auto whitespace-pre">
+                <div className="min-w-0 overflow-hidden bg-gray-50 dark:bg-[#171717] border border-gray-200 dark:border-gray-800 rounded-lg mb-5">
+                  <pre className="m-0 max-w-full overflow-x-auto p-4 text-sm font-mono leading-relaxed text-gray-800 dark:text-gray-300 whitespace-pre custom-scrollbar">
                     <code>{algo.code}</code>
                   </pre>
                 </div>
@@ -61,7 +61,7 @@ export default function Examples() {
             ))}
 
             {category.tables?.map((table, tIndex) => (
-              <div key={tIndex} className="border border-gray-200 dark:border-gray-800 rounded-xl p-6 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none">
+              <div key={tIndex} className="min-w-0 border border-gray-200 dark:border-gray-800 rounded-lg p-6 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">{table.title}</h3>
                 
                 <div className="overflow-x-auto">
@@ -79,13 +79,13 @@ export default function Examples() {
                         <tr key={rIndex}>
                           <td className="py-4 text-gray-800 dark:text-gray-300">{row.operation}</td>
                           <td className="py-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getBadgeStyles(row.color)}`}>
+                            <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${getBadgeStyles(row.color)}`}>
                               {row.time}
                             </span>
                           </td>
                           {table.hasWorstCase && row.worstTime && row.worstColor && (
                             <td className="py-4">
-                              <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getBadgeStyles(row.worstColor)}`}>
+                              <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${getBadgeStyles(row.worstColor)}`}>
                                 {row.worstTime}
                               </span>
                             </td>

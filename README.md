@@ -54,13 +54,13 @@ cd algorithmic-complexity-analyzer
 ```
 
 2. Backend Setup (FastAPI & Tree-sitter)
-Ensure you have Python 3.9+ installed.
+Ensure you have Python 3.10+ installed. Backend dependencies are pinned; see `backend/README.md` for the full reproducible setup and test commands.
 
 ```
 cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-pip install -r requirements.txt
+python -m venv ../.venv
+../.venv/bin/python -m pip install -r requirements-dev.txt
+../.venv/bin/python -m unittest discover -s tests
 ```
 Create a .env file in the backend/ directory and add your Google Gemini API key:
 
@@ -70,7 +70,7 @@ GEMINI_API_KEY=your_api_key_here
 Start the FastAPI server:
 
 ```
-uvicorn main:app --reload
+../.venv/bin/python -m uvicorn main:app --reload
 ```
 
 3. Frontend Setup (React + Tailwind)

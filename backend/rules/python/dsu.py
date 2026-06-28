@@ -41,7 +41,7 @@ def analyze_dsu(root_node, raw_code):
             }
         else:
             return {
-                "time_complexity": "O(E * α(V))", # Inverse Ackermann function (Amortized O(E))
+                "time_complexity": "O(E * alpha(V))", # Inverse Ackermann function (Amortized O(E))
                 "space_complexity": "O(V)",
             }
             

@@ -33,6 +33,18 @@ def has_bst_conditional(node, code_bytes):
             return True
     return False
 
+
+def has_bfs_frontier(node, code_bytes):
+    """
+    Detects iterative breadth-first traversal where the queue/frontier can grow to O(n).
+    Recursive traversal is handled as O(h) call-stack space below.
+    """
+    text = code_bytes[node.start_byte:node.end_byte].decode('utf8').lower()
+    frontier_signals = ['deque(', 'queue(', 'popleft(', 'pop(0)', '.get(']
+    loop_signals = ['while ', 'for ']
+    return any(signal in text for signal in frontier_signals) and any(signal in text for signal in loop_signals)
+
+
 def analyze_binary_tree(root_node, raw_code):
     """
     Distinguishes between standard Tree Traversal and BST Search.
@@ -48,11 +60,18 @@ def analyze_binary_tree(root_node, raw_code):
                 "time_complexity": "O(log n)",
                 "space_complexity": "O(h)", # Height of tree
             }
-        # Otherwise, it's a full traversal (like your Burning Tree BFS)
+        # Queue-based breadth-first traversals can hold an entire tree level.
+        if has_bfs_frontier(root_node, code_bytes):
+            return {
+                "time_complexity": "O(n)",
+                "space_complexity": "O(n)",
+            }
+
+        # Recursive DFS traversal uses call-stack space proportional to tree height.
         else:
             return {
                 "time_complexity": "O(n)",
-                "space_complexity": "O(n)", # Worst case space for BFS queue is O(n)
+                "space_complexity": "O(h)",
             }
                 
     return None

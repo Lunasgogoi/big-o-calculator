@@ -9,6 +9,8 @@ def find_inner_while_with_pointer(node, code_bytes):
         body = node.child_by_field_name('body')
         if body:
             body_text = code_bytes[body.start_byte:body.end_byte].decode('utf8')
+            if '//=' in body_text or '/=' in body_text or '>>=' in body_text:
+                return False
             if '+=' in body_text or '-=' in body_text:
                 return True
                 

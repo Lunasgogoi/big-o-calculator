@@ -158,7 +158,7 @@ export const faqData: FAQCategory[] = [
         question: "What programming languages does Big O Calc support?",
         answer: (
           <div className="space-y-4">
-            <p>Big O Calc supports most popular programming languages including Python, JavaScript, Java, C++, C#, Ruby, Go, and more. The AI analyzes the algorithmic structure of your code, which is similar across languages.</p>
+            <p>Big O Calc currently supports Python and C++. The static analyzer has dedicated rules for those languages, and the AI explanation can help clarify ambiguous results.</p>
             <p>For best results, submit clean, well-formatted code with clear logic. The tool focuses on algorithmic patterns like loops, recursion, and data structure operations rather than language-specific syntax.</p>
           </div>
         )

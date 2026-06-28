@@ -15,6 +15,15 @@ def detect_heap_operations(node, code_bytes):
             
     return False
 
+
+def detects_bounded_k_heap(raw_code):
+    normalized = raw_code.lower().replace(" ", "")
+    has_heap_push = "heappush(" in normalized
+    has_heap_trim = "heappop(" in normalized or "heapreplace(" in normalized or "heappushpop(" in normalized
+    has_k_bound = "len(heap)>k" in normalized or "len(pq)>k" in normalized or "len(h)>k" in normalized
+    return has_heap_push and has_heap_trim and has_k_bound
+
+
 def has_loops(node):
     """Simple helper to confirm if the code iterates."""
     if node.type in ['for_statement', 'while_statement']:
@@ -33,6 +42,12 @@ def analyze_heap(root_node, raw_code):
     
     # Do we have heap operations?
     if detect_heap_operations(root_node, code_bytes):
+        if has_loops(root_node) and detects_bounded_k_heap(raw_code):
+            return {
+                "time_complexity": "O(n log k)",
+                "space_complexity": "O(k)",
+            }
+
         # Are we pushing/popping inside a loop? (e.g., adding N elements to a heap)
         if has_loops(root_node):
             return {
@@ -43,7 +58,7 @@ def analyze_heap(root_node, raw_code):
         else:
             return {
                 "time_complexity": "O(log n)",
-                "space_complexity": "O(n)", 
+                "space_complexity": "O(1)", 
             }
             
     return None

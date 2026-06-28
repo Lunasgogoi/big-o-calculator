@@ -3,8 +3,6 @@ import EditorComponent from 'react-simple-code-editor';
 import Prism from 'prismjs';
 
 import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import 'prismjs/themes/prism-tomorrow.css';
@@ -26,7 +24,7 @@ const Editor = editorModule.default ?? EditorComponent;
 export default function CodeEditor({ code, setCode, language }: CodeEditorProps) {
   
   const highlightCode = (code: string) => {
-    const grammar = Prism.languages[language] || Prism.languages.javascript;
+    const grammar = Prism.languages[language] || Prism.languages.python;
     return Prism.highlight(code, grammar, language);
   };
 

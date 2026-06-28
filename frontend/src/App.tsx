@@ -29,7 +29,7 @@ export default function App() {
 
   return (
     <Router>
-      <div className="min-h-screen transition-colors duration-300 bg-white dark:bg-[#1e1e1e] text-gray-800 dark:text-gray-300 font-sans flex flex-col items-center px-4 pb-20">
+      <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-300 bg-white dark:bg-[#1e1e1e] text-gray-800 dark:text-gray-300 font-sans flex flex-col items-center px-4 pb-20">
         
       <Toaster 
         position="bottom-right"
@@ -46,7 +46,7 @@ export default function App() {
         <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCode={setCode} setLanguage={setlanguage} />
 
         {/* Our routing logic is now safely tucked away in its own file! */}
-        <main className="w-full max-w-4xl flex-grow">
+        <main className="w-full max-w-4xl min-w-0 flex-grow">
           <AppRoutes setCode={setCode} code={code} language={language} setLanguage={setlanguage} />
         </main>
         

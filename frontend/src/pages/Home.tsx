@@ -8,6 +8,8 @@ import CodeEditor from '../components/CodeEditor';
 import toast from 'react-hot-toast';
 import type { AnalysisResult } from '../components/ResultPanel';
 
+const MAX_CODE_LENGTH = 1500;
+
 interface HomeProps {
   code: string;
   setCode: (code: string) => void;
@@ -19,11 +21,28 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleCodeChange = (nextCode: string) => {
+    if (nextCode.length <= MAX_CODE_LENGTH) {
+      setCode(nextCode);
+      return;
+    }
+
+    setCode(nextCode.slice(0, MAX_CODE_LENGTH));
+    if (code.length < MAX_CODE_LENGTH) {
+      toast.error(`Code is limited to ${MAX_CODE_LENGTH.toLocaleString()} characters.`);
+    }
+  };
+
   const handleCalculate = async () => {
     if (!code.trim()) {
       toast.error('Please enter some code to analyze.');
       return;
     } 
+
+    if (code.length > MAX_CODE_LENGTH) {
+      toast.error(`Code must be ${MAX_CODE_LENGTH.toLocaleString()} characters or fewer.`);
+      return;
+    }
   
     setIsLoading(true);
     setResult(null);
@@ -65,7 +84,7 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
       <header className="mb-10">
         <h1 className="text-4xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">Big O Calc</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
-          Calculate the time and space complexity of your code using Big O notation.
+          Estimate the time and space complexity of your code using Big O notation.
         </p>
       </header>
 
@@ -89,11 +108,13 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
               <option value="cpp" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C++</option>
             </select>
           </div>
-          <div>{code.length} / 1,500</div>
+          <div className={code.length >= MAX_CODE_LENGTH ? 'font-semibold text-amber-600 dark:text-amber-400' : undefined}>
+            {code.length} / {MAX_CODE_LENGTH.toLocaleString()}
+          </div>
         </div>
         
         {/* Pass the props to PrismJS/CodeEditor! */}
-        <CodeEditor code={code} setCode={setCode} language={language} />
+        <CodeEditor code={code} setCode={handleCodeChange} language={language} />
       </div>
 
       {/* --- SUBMIT BUTTON --- */}
@@ -104,25 +125,25 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         disabled={isLoading}
         className="bg-teal-600 hover:bg-teal-500 disabled:bg-teal-800 text-white font-medium py-2.5 px-6 rounded-lg transition duration-200 mb-8 shadow-md cursor-pointer"
       >
-        {isLoading ? 'Analyzing Code...' : 'Calculate'}
+        {isLoading ? 'Analyzing Code...' : 'Estimate'}
       </button>
       
       {/* --- RESULTS PANEL --- */}
       {result ? <ResultPanel result={result} /> : (
         <div className="border border-dashed border-gray-300 dark:border-gray-800 rounded-xl p-8 text-center text-gray-600 dark:text-gray-500 bg-gray-100 dark:bg-[#0f0f0f] mb-20 transition-colors duration-300">
-          Paste your code above and click <strong className="text-gray-900 dark:text-white">Calculate</strong> to analyze its time and space complexity.
+          Paste your code above and click <strong className="text-gray-900 dark:text-white">Estimate</strong> to analyze its likely time and space complexity.
         </div>
       )}
 
       {/* --- INFORMATIONAL CONTENT (Landing Page Overview) --- */}
-      <div className="space-y-20 max-w-3xl text-left">
+      <div className="space-y-20 w-full max-w-4xl text-left">
         
         <section className="mb-16 mt-16 max-w-3xl text-left">
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">How to Use This Tool</h2>
           <ol className="list-decimal list-outside space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed pl-5 mb-8">
             <li><strong>Paste your code</strong> into the editor above. Supports Python and C++.</li>
-            <li><strong>Click Calculate</strong> to analyze the time and space complexity using Big O notation.</li>
-            <li><strong>Review the result</strong> — you'll get a step-by-step breakdown of how the complexity was determined.</li>
+            <li><strong>Click Estimate</strong> to analyze the likely time and space complexity using Big O notation.</li>
+            <li><strong>Review the result</strong> to see the estimate, confidence, and static evidence.</li>
           </ol>
           
           {/* Stacked Tip Boxes (Clean, Dark UI) */}
@@ -140,13 +161,13 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         {/* Common Complexity Classes */}
         <section>
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">Common Complexity Classes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             <ComplexityCard title="O(1)" lightBg="bg-green-100" lightText="text-green-800" darkBg="bg-green-900/40" darkText="text-green-400" name="Constant" description="Array access, hash lookup" />
             <ComplexityCard title="O(log n)" lightBg="bg-blue-100" lightText="text-blue-800" darkBg="bg-blue-900/40" darkText="text-blue-400" name="Logarithmic" description="Binary search" />
             <ComplexityCard title="O(n)" lightBg="bg-orange-100" lightText="text-orange-800" darkBg="bg-orange-900/40" darkText="text-orange-400" name="Linear" description="Single loop, linear search" />
             <ComplexityCard title="O(n log n)" lightBg="bg-orange-100" lightText="text-orange-800" darkBg="bg-orange-900/40" darkText="text-orange-400" name="Linearithmic" description="Merge sort, quick sort" />
-            <ComplexityCard title="O(n²)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400" name="Quadratic" description="Nested loops, bubble sort" />
-            <ComplexityCard title="O(2ⁿ)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400" name="Exponential" description="Recursive Fibonacci" />
+            <ComplexityCard title="O(n^2)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400" name="Quadratic" description="Nested loops, bubble sort" />
+            <ComplexityCard title="O(2^n)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400" name="Exponential" description="Recursive Fibonacci" />
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Learn the details in our <Link to="/guide" className="text-blue-600 dark:text-blue-500 hover:underline">comprehensive guide</Link>.
@@ -156,26 +177,26 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         {/* Popular Examples */}
         <section>
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">Popular Examples</h2>
-          <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm dark:shadow-none transition-colors duration-300 mb-6 space-y-8">
+          <div className="min-w-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-gray-800 rounded-lg p-6 shadow-sm dark:shadow-none transition-colors duration-300 mb-6 space-y-8">
             <CodeExample 
               title="Binary Search" 
               badgeTitle="O(log n)" lightBg="bg-blue-100" lightText="text-blue-800" darkBg="bg-blue-900/40" darkText="text-blue-400"
-              code={`function binarySearch(arr, target) {\n  let left = 0, right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}`}
-              explanation="Halves the search space each iteration → logarithmic time, constant space."
+              code={`def binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        if arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n\n    return -1`}
+              explanation="Halves the search space each iteration -> logarithmic time, constant space."
             />
             <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
               <CodeExample 
                 title="Two Sum (Brute Force vs Hash Map)" 
-                badgeTitle="O(n²) / O(n)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400"
-                code={`// Brute force: O(n²)\nfunction twoSum(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) return [i, j];\n    }\n  }\n}\n\n// Optimized: O(n)\nfunction twoSumFast(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) return [map.get(complement), i];\n    map.set(nums[i], i);\n  }\n}`}
-                explanation="A hash map trades O(n) space for O(n²) → O(n) time improvement."
+                badgeTitle="O(n^2) / O(n)" lightBg="bg-red-100" lightText="text-red-800" darkBg="bg-red-900/40" darkText="text-red-400"
+                code={`# Brute force: O(n^2)\ndef two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]\n\n# Optimized: O(n)\ndef two_sum_fast(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i`}
+                explanation="A hash map trades O(n) space for an O(n^2) -> O(n) time improvement."
               />
             </div>
             <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
               <CodeExample 
                 title="Merge Sort" 
                 badgeTitle="O(n log n)" lightBg="bg-orange-100" lightText="text-orange-800" darkBg="bg-orange-900/40" darkText="text-orange-400"
-                code={`function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  return merge(left, right);\n}`}
+                code={`def merge_sort(arr):\n    if len(arr) <= 1:\n        return arr\n\n    mid = len(arr) // 2\n    left = merge_sort(arr[:mid])\n    right = merge_sort(arr[mid:])\n\n    return merge(left, right)`}
                 explanation="Divides array into halves (log n levels), merges n elements per level."
               />
             </div>
@@ -189,13 +210,13 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         <section className="space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed">
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-4">What is Big O Notation?</h2>
           <p>Big O notation is a mathematical notation used to describe the performance or complexity of an algorithm. It specifically describes the worst-case scenario and helps you understand how the runtime or space requirements grow as the input size increases.</p>
-          <p>Think of it as a way to answer: <em className="text-gray-900 dark:text-gray-300">"If I double my input, how much slower does my code get?"</em> An O(n) algorithm takes twice as long, an O(n²) algorithm takes four times as long, and an O(log n) algorithm barely notices the difference.</p>
+          <p>Think of it as a way to answer: <em className="text-gray-900 dark:text-gray-300">"If I double my input, how much slower does my code get?"</em> An O(n) algorithm takes twice as long, an O(n^2) algorithm takes four times as long, and an O(log n) algorithm barely notices the difference.</p>
           <p>When analyzing complexity, we focus on the <strong className="text-gray-900 dark:text-gray-200">rate of growth</strong> rather than exact numbers. Constants and lower-order terms are dropped because they become insignificant as the input grows very large. For example, O(2n + 5) simplifies to O(n).</p>
         </section>
 
         <section className="space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed">
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-4">Why Big O Matters</h2>
-          <p>Choosing the right algorithm can mean the difference between a program that finishes in milliseconds and one that takes hours. For example, sorting 1 million items with bubble sort (O(n²)) requires roughly 1 trillion operations, while merge sort (O(n log n)) needs only about 20 million — a 50,000x improvement.</p>
+          <p>Choosing the right algorithm can mean the difference between a program that finishes in milliseconds and one that takes hours. For example, sorting 1 million items with bubble sort (O(n^2)) requires roughly 1 trillion operations, while merge sort (O(n log n)) needs only about 20 million - a 50,000x improvement.</p>
           <p>Big O analysis is essential for coding interviews at top tech companies, competitive programming, and building production systems that need to scale. It gives you a shared vocabulary to discuss algorithm efficiency with other engineers.</p>
         </section>
 

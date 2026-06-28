@@ -29,11 +29,34 @@ def detect_log_division(node, code_bytes):
             
     return False
 
+
+def get_log_loop_depth(node, code_bytes, current_depth=0):
+    local_depth = current_depth
+    max_depth = current_depth
+
+    if node.type in ['while_statement', 'for_statement']:
+        body = node.child_by_field_name('body')
+        if body and detect_log_division(body, code_bytes):
+            local_depth += 1
+            max_depth = max(max_depth, local_depth)
+
+    for child in node.children:
+        max_depth = max(max_depth, get_log_loop_depth(child, code_bytes, local_depth))
+
+    return max_depth
+
+
 def analyze_logarithmic(root_node, raw_code):
     """
     Returns O(log n) if a loop relies on division or bit-shifting to progress.
     """
     code_bytes = bytes(raw_code, "utf8")
+    log_loop_depth = get_log_loop_depth(root_node, code_bytes)
+    if log_loop_depth >= 2:
+        return {
+            "time_complexity": "O((log n)^2)",
+            "space_complexity": "O(1)",
+        }
     
     # Let's hunt for a loop...
     def check_loops(node):
