@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ComplexityCard from '../components/ComplexityCard';
@@ -48,7 +47,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
     setResult(null);
 
     try {
-      // Use the environment variable if it exists, otherwise default to localhost
       const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
       
       const response = await fetch(`${backendUrl}/api/analyze`, {
@@ -80,7 +78,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
 
   return (
     <>
-      {/* --- HERO SECTION --- */}
       <header className="mb-10">
         <h1 className="text-4xl md:text-4xl font-serif font-bold text-gray-900 dark:text-white mb-4">Big O Calc</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl">
@@ -88,7 +85,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         </p>
       </header>
 
-      {/* --- EDITOR SECTION --- */}
       <div className="bg-white dark:bg-[#161616] rounded-xl border border-gray-300 dark:border-gray-800 p-4 mb-6 shadow-xl dark:shadow-2xl transition-colors duration-300">
         <div className="flex justify-between items-center mb-4 text-xs text-gray-500 border-b border-gray-200 dark:border-gray-800 pb-3">
           <div className="flex space-x-2 items-center">
@@ -96,7 +92,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
             <div className="w-3 h-3 rounded-full bg-amber-400 dark:bg-gray-700"></div>
             <div className="w-3 h-3 rounded-full bg-green-400 dark:bg-gray-700"></div>
             
-            {/* The Language Dropdown (Updated to Blue Focus Ring) */}
             <select 
               title="Select programming language"
               aria-label="Select programming language"
@@ -113,13 +108,9 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
           </div>
         </div>
         
-        {/* Pass the props to PrismJS/CodeEditor! */}
         <CodeEditor code={code} setCode={handleCodeChange} language={language} />
       </div>
 
-      {/* --- SUBMIT BUTTON --- */}
-      {/* --- SUBMIT BUTTON --- */}
-      {/* --- SUBMIT BUTTON --- */}
       <button 
         onClick={handleCalculate}
         disabled={isLoading}
@@ -128,14 +119,12 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         {isLoading ? 'Analyzing Code...' : 'Estimate'}
       </button>
       
-      {/* --- RESULTS PANEL --- */}
       {result ? <ResultPanel result={result} /> : (
         <div className="border border-dashed border-gray-300 dark:border-gray-800 rounded-xl p-8 text-center text-gray-600 dark:text-gray-500 bg-gray-100 dark:bg-[#0f0f0f] mb-20 transition-colors duration-300">
           Paste your code above and click <strong className="text-gray-900 dark:text-white">Estimate</strong> to analyze its likely time and space complexity.
         </div>
       )}
 
-      {/* --- INFORMATIONAL CONTENT (Landing Page Overview) --- */}
       <div className="space-y-20 w-full max-w-4xl text-left">
         
         <section className="mb-16 mt-16 max-w-3xl text-left">
@@ -146,7 +135,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
             <li><strong>Review the result</strong> to see the estimate, confidence, and static evidence.</li>
           </ol>
           
-          {/* Stacked Tip Boxes (Clean, Dark UI) */}
           <div className="space-y-3">
             <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
               <span className="font-bold text-gray-800 dark:text-gray-300">Tip:</span> Keep your code under 1,500 characters for best results. Focus on the core algorithm rather than boilerplate code.
@@ -158,7 +146,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
           </div>
         </section>
 
-        {/* Common Complexity Classes */}
         <section>
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">Common Complexity Classes</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
@@ -174,7 +161,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
           </p>
         </section>
 
-        {/* Popular Examples */}
         <section>
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-6">Popular Examples</h2>
           <div className="min-w-0 bg-white dark:bg-[#121212] border border-gray-200 dark:border-gray-800 rounded-lg p-6 shadow-sm dark:shadow-none transition-colors duration-300 mb-6 space-y-8">
@@ -206,7 +192,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
           </p>
         </section>
 
-        {/* Text Sections */}
         <section className="space-y-4 text-gray-700 dark:text-gray-400 leading-relaxed">
           <h2 className="text-2xl font-serif font-bold text-gray-900 dark:text-white mb-4">What is Big O Notation?</h2>
           <p>Big O notation is a mathematical notation used to describe the performance or complexity of an algorithm. It specifically describes the worst-case scenario and helps you understand how the runtime or space requirements grow as the input size increases.</p>

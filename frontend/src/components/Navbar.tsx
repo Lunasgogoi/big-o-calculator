@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import { Link } from 'react-router-dom';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -11,7 +10,6 @@ interface NavbarProps {
 
 export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage }: NavbarProps) {
   return (
-    // We update the nav styling for the bottom border and correct padding
     <nav className="w-full max-w-4xl flex justify-between items-center pt-6 pb-6 border-b border-gray-100 dark:border-gray-800 mb-8 transition-colors duration-300">
       <Link 
         to="/" 
@@ -32,9 +30,10 @@ export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage
         <button 
           onClick={() => setIsDarkMode(!isDarkMode)}
           className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+          aria-label="Toggle theme"
           title="Toggle Theme"
         >
-          {isDarkMode ? '☀️' : '🌙'}
+          {isDarkMode ? 'Light' : 'Dark'}
         </button>
       </div>
     </nav>

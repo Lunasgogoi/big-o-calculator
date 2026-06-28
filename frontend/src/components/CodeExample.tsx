@@ -32,5 +32,3 @@ export default function CodeExample({
     </div>
   );
 } 
-
-// what it does - This component renders a code example with a title, badge, code block, and explanation.

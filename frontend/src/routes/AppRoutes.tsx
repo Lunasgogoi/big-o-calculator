@@ -1,7 +1,5 @@
-// src/routes/AppRoutes.tsx
 import { Routes, Route } from 'react-router-dom';
 
-// Import all of our pages here!
 import Home from '../pages/Home';
 import Guide from '../pages/Guide';
 import Examples from '../pages/Examples';

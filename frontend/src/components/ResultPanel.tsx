@@ -1,5 +1,3 @@
-// src/components/ResultPanel.tsx
-
 type ConfidenceLabel = 'high' | 'medium' | 'low';
 
 interface MatchedRule {
