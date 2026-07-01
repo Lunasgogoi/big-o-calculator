@@ -14,8 +14,8 @@ interface AnalysisCardProps {
 
 const AnalysisCard: React.FC<AnalysisCardProps> = ({ timeComplexity, spaceComplexity, steps, proTip }) => {
   return (
-    <div className="bg-white dark:bg-[#262626]/50 border border-gray-200 dark:border-gray-700 rounded-xl p-6 md:p-8 shadow-sm dark:shadow-none transition-colors duration-300">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 pb-8 border-b border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div className="bg-[#fffdf8] dark:bg-[#262626]/50 border border-[#d8e2d7] dark:border-gray-700 rounded-xl p-6 md:p-8 shadow-sm shadow-slate-200/50 dark:shadow-none transition-colors duration-300">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 pb-8 border-b border-[#d8e2d7] dark:border-gray-700 transition-colors duration-300">
         
         <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800/50 p-4 rounded-lg transition-colors duration-300">
           <p className="text-blue-700 dark:text-blue-400 text-sm font-semibold uppercase tracking-wider mb-1">Time Complexity</p>
@@ -28,15 +28,15 @@ const AnalysisCard: React.FC<AnalysisCardProps> = ({ timeComplexity, spaceComple
         </div>
       </div>
 
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-5">Step-by-Step Breakdown</h3>
-      <ol className="space-y-4 text-gray-700 dark:text-gray-400 mb-8">
+      <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 mb-5">Step-by-Step Breakdown</h3>
+      <ol className="space-y-4 text-slate-700 dark:text-gray-400 mb-8">
         {steps.map((step, index) => (
           <li key={index} className="flex items-start">
             <span className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold mr-3 mt-0.5 transition-colors duration-300">
               {index + 1}
             </span>
             <p className="leading-relaxed">
-              <strong className="text-gray-900 dark:text-gray-300">{step.label}:</strong> {step.text}
+              <strong className="text-slate-900 dark:text-gray-300">{step.label}:</strong> {step.text}
             </p>
           </li>
         ))}

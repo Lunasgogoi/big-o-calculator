@@ -9,29 +9,29 @@ const getBadgeStyles = (color: string) => {
     case 'orange': return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/60';
     case 'red': return 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/60';
     case 'blue': return 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/60';
-    default: return 'bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
+    default: return 'bg-[#e9f0e8] text-gray-700 border-[#d8e2d7] dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700';
   }
 };
 
 export default function Examples() {
   return (
-    <div className="max-w-4xl mx-auto w-full pt-8 pb-24 text-gray-800 dark:text-gray-200">
+    <div className="max-w-4xl mx-auto w-full pt-8 pb-24 text-slate-800 dark:text-gray-200">
       
       <div className="mb-16">
-        <h1 className="text-4xl font-bold mb-4 font-serif text-gray-900 dark:text-white">Algorithm Examples & Complexity Analysis</h1>
+        <h1 className="text-4xl font-bold mb-4 font-serif text-slate-900 dark:text-white">Algorithm Examples & Complexity Analysis</h1>
         <p className="text-gray-600 dark:text-gray-400 text-lg">Learn from real-world examples of common algorithms and their Big O complexities</p>
       </div>
 
       {examplesData.map((category, catIndex) => (
         <div key={catIndex} className="mb-20">
-          <h2 className="text-2xl font-bold mb-8 font-serif text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-800 pb-2">
+          <h2 className="text-2xl font-bold mb-8 font-serif text-slate-900 dark:text-white border-b border-[#d8e2d7] dark:border-gray-800 pb-2">
             {category.categoryName}
           </h2>
           
           <div className="flex flex-col gap-8">
             {category.examples?.map((algo) => (
-              <div key={algo.id} className="min-w-0 border border-gray-200 dark:border-gray-800 rounded-lg p-6 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none">
-                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{algo.title}</h3>
+              <div key={algo.id} className="min-w-0 border border-[#d8e2d7] dark:border-gray-800 rounded-lg p-6 bg-[#fffdf8] dark:bg-[#121212] shadow-sm shadow-slate-200/50 dark:shadow-none">
+                <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white">{algo.title}</h3>
                 
                 <div className="flex flex-wrap gap-3 mb-5 text-sm font-bold">
                   {algo.badges.map((badge, bIndex) => (
@@ -45,29 +45,29 @@ export default function Examples() {
                   <p className="text-gray-600 dark:text-gray-400 mb-6">{algo.description}</p>
                 )}
 
-                <div className="min-w-0 overflow-hidden bg-gray-50 dark:bg-[#171717] border border-gray-200 dark:border-gray-800 rounded-lg mb-5">
-                  <pre className="m-0 max-w-full overflow-x-auto p-4 text-sm font-mono leading-relaxed text-gray-800 dark:text-gray-300 whitespace-pre custom-scrollbar">
+                <div className="min-w-0 overflow-hidden bg-[#f2f5f0] dark:bg-[#171717] border border-[#d8e2d7] dark:border-gray-800 rounded-lg mb-5">
+                  <pre className="m-0 max-w-full overflow-x-auto p-4 text-sm font-mono leading-relaxed text-slate-800 dark:text-gray-300 whitespace-pre custom-scrollbar">
                     <code>{algo.code}</code>
                   </pre>
                 </div>
 
                 <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                  <p><strong className="text-gray-900 dark:text-gray-200">Analysis:</strong> {algo.analysis}</p>
+                  <p><strong className="text-slate-900 dark:text-gray-200">Analysis:</strong> {algo.analysis}</p>
                   {algo.useCase && (
-                    <p><strong className="text-gray-900 dark:text-gray-200">Use case:</strong> {algo.useCase}</p>
+                    <p><strong className="text-slate-900 dark:text-gray-200">Use case:</strong> {algo.useCase}</p>
                   )}
                 </div>
               </div>
             ))}
 
             {category.tables?.map((table, tIndex) => (
-              <div key={tIndex} className="min-w-0 border border-gray-200 dark:border-gray-800 rounded-lg p-6 bg-white dark:bg-[#121212] shadow-sm dark:shadow-none">
-                <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">{table.title}</h3>
+              <div key={tIndex} className="min-w-0 border border-[#d8e2d7] dark:border-gray-800 rounded-lg p-6 bg-[#fffdf8] dark:bg-[#121212] shadow-sm shadow-slate-200/50 dark:shadow-none">
+                <h3 className="text-xl font-bold mb-6 text-slate-900 dark:text-white">{table.title}</h3>
                 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400">
+                      <tr className="border-b border-[#d8e2d7] dark:border-gray-800 text-gray-600 dark:text-gray-400">
                         <th className="pb-3 font-medium">Operation</th>
                         <th className="pb-3 font-medium">{table.hasWorstCase ? 'Average Case' : 'Time Complexity'}</th>
                         {table.hasWorstCase && <th className="pb-3 font-medium">Worst Case</th>}
@@ -77,7 +77,7 @@ export default function Examples() {
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-800/50">
                       {table.rows.map((row, rIndex) => (
                         <tr key={rIndex}>
-                          <td className="py-4 text-gray-800 dark:text-gray-300">{row.operation}</td>
+                          <td className="py-4 text-slate-800 dark:text-gray-300">{row.operation}</td>
                           <td className="py-4">
                             <span className={`px-2.5 py-1 rounded-md text-xs font-bold border ${getBadgeStyles(row.color)}`}>
                               {row.time}
@@ -99,7 +99,7 @@ export default function Examples() {
                   </table>
                 </div>
                 {table.note && (
-                  <p className="mt-6 text-sm text-gray-600 dark:text-gray-400"><strong className="text-gray-900 dark:text-gray-200">Note:</strong> {table.note}</p>
+                  <p className="mt-6 text-sm text-gray-600 dark:text-gray-400"><strong className="text-slate-900 dark:text-gray-200">Note:</strong> {table.note}</p>
                 )}
               </div>
             ))}
@@ -107,8 +107,8 @@ export default function Examples() {
         </div>
       ))}
 
-      <div className="mt-24 border-t border-gray-200 dark:border-gray-800 pt-12 mb-12">
-        <h2 className="text-2xl font-bold mb-4 font-serif text-gray-900 dark:text-white">Try These Examples</h2>
+      <div className="mt-24 border-t border-[#d8e2d7] dark:border-gray-800 pt-12 mb-12">
+        <h2 className="text-2xl font-bold mb-4 font-serif text-slate-900 dark:text-white">Try These Examples</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
           Want to verify these complexity analyses? Copy any of the code examples above and paste them into our <Link to="/" className="text-emerald-600 dark:text-emerald-500 hover:text-emerald-500 dark:hover:text-emerald-400 font-medium">Big O Calculator</Link> to see the AI's analysis. You can also modify the code and see how the complexity changes!
         </p>

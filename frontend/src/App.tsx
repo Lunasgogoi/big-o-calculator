@@ -26,15 +26,15 @@ export default function App() {
 
   return (
     <Router>
-      <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-300 bg-white dark:bg-[#1e1e1e] text-gray-800 dark:text-gray-300 font-sans flex flex-col items-center px-4 pb-20">
+      <div className="min-h-screen w-full overflow-x-hidden transition-colors duration-300 bg-[#f4f7f4] dark:bg-[#1e1e1e] text-slate-700 dark:text-gray-300 font-sans flex flex-col items-center px-4 pb-20">
         
       <Toaster 
         position="bottom-right"
         toastOptions={{
           style: {
-            background:isDarkMode ? '#333' : '#fff',
-            color : isDarkMode ? '#fff' : '#333',
-            border: isDarkMode ? '1px solid #444' : '1px solid #eee',
+            background:isDarkMode ? '#333' : '#fffdf8',
+            color : isDarkMode ? '#fff' : '#243142',
+            border: isDarkMode ? '1px solid #444' : '1px solid #d8e2d7',
           }
         }}
         />
@@ -45,7 +45,7 @@ export default function App() {
           <AppRoutes setCode={setCode} code={code} language={language} setLanguage={setlanguage} />
         </main>
         
-        <footer className="w-full max-w-4xl mt-20 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-sm text-gray-500 transition-colors duration-300">
+        <footer className="w-full max-w-4xl mt-20 pt-8 border-t border-[#d8e2d7] dark:border-gray-800 text-center text-sm text-slate-500 transition-colors duration-300">
           Big O Calc - Free algorithm complexity analyzer <a href="https://github.com/Lunasgogoi/big-o-calculator" target="_blank" rel="noreferrer noopener" className="hover:underline">GitHub</a></footer>
       </div>
     </Router>

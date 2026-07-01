@@ -47,10 +47,10 @@ export default function ResultPanel({ result }: ResultPanelProps) {
   const visibleMatches = result.matched_rules?.slice(0, 4) ?? [];
 
   return (
-    <div className="border border-teal-500/50 rounded-xl p-8 bg-white dark:bg-[#121212] mb-20 shadow-lg transition-colors duration-300">
+    <div className="border border-teal-500/40 rounded-xl p-8 bg-[#fffdf8] dark:bg-[#121212] mb-20 shadow-lg shadow-slate-200/60 transition-colors duration-300">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-6">
         <div>
-          <h3 className="text-2xl font-serif font-bold text-gray-900 dark:text-white">Estimated Analysis</h3>
+          <h3 className="text-2xl font-serif font-bold text-slate-900 dark:text-white">Estimated Analysis</h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Static result based on detected code patterns, not a formal proof.
           </p>
@@ -64,13 +64,13 @@ export default function ResultPanel({ result }: ResultPanelProps) {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="bg-gray-50 dark:bg-[#1a1a1a] p-5 rounded-lg border border-gray-200 dark:border-gray-800">
+        <div className="bg-[#f2f5f0] dark:bg-[#1a1a1a] p-5 rounded-lg border border-[#d8e2d7] dark:border-gray-800">
           <span className="block text-gray-500 dark:text-gray-400 text-sm mb-2">Estimated Time</span>
           <span className="text-3xl font-mono font-bold text-teal-600 dark:text-teal-400">
             {result.time_complexity}
           </span>
         </div>
-        <div className="bg-gray-50 dark:bg-[#1a1a1a] p-5 rounded-lg border border-gray-200 dark:border-gray-800">
+        <div className="bg-[#f2f5f0] dark:bg-[#1a1a1a] p-5 rounded-lg border border-[#d8e2d7] dark:border-gray-800">
           <span className="block text-gray-500 dark:text-gray-400 text-sm mb-2">Estimated Space</span>
           <span className="text-3xl font-mono font-bold text-teal-600 dark:text-teal-400">
             {result.space_complexity}
@@ -78,9 +78,9 @@ export default function ResultPanel({ result }: ResultPanelProps) {
         </div>
       </div>
 
-      <div className="mb-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#1a1a1a] p-5">
+      <div className="mb-6 rounded-lg border border-[#d8e2d7] dark:border-gray-800 bg-[#f2f5f0] dark:bg-[#1a1a1a] p-5">
         <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between mb-3">
-          <h4 className="font-semibold text-gray-800 dark:text-gray-200">Static Evidence</h4>
+          <h4 className="font-semibold text-slate-800 dark:text-gray-200">Static Evidence</h4>
           <span className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
             Rule: {formatRuleName(result.dominant_rule)}
           </span>
@@ -95,13 +95,13 @@ export default function ResultPanel({ result }: ResultPanelProps) {
         </ul>
 
         {visibleMatches.length > 1 ? (
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="mt-4 pt-4 border-t border-[#d8e2d7] dark:border-gray-800">
             <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">Matched Rules</div>
             <div className="flex flex-wrap gap-2">
               {visibleMatches.map((match) => (
                 <span
                   key={`${match.rule_name}-${match.time_complexity}`}
-                  className="px-2.5 py-1 rounded-md bg-white dark:bg-[#121212] border border-gray-200 dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400"
+                  className="px-2.5 py-1 rounded-md bg-[#fffdf8] dark:bg-[#121212] border border-[#d8e2d7] dark:border-gray-800 text-xs text-gray-600 dark:text-gray-400"
                 >
                   {formatRuleName(match.rule_name)} - {Math.round(match.confidence * 100)}%
                 </span>
@@ -111,7 +111,7 @@ export default function ResultPanel({ result }: ResultPanelProps) {
         ) : null}
       </div>
 
-      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+      <div className="mt-6 pt-6 border-t border-[#d8e2d7] dark:border-gray-800">
         <div className="text-teal-600 dark:text-teal-500 font-bold mb-2">AI Overview:</div>
         <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
           {result.ai_suggestion}

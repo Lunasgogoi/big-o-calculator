@@ -38,10 +38,10 @@ const Tutorial = () => {
       <aside className="w-full md:w-72 flex-shrink-0">
         <div className="md:sticky md:top-6">
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hidden md:block">Curriculum</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2 hidden md:block">Curriculum</h2>
             {/* UPDATED PROGRESS BAR: Uses completedLessons.length and teal color */}
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{completedLessons.length} of {totalLessons} complete</p>
-            <div className="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-[#dfe8de] dark:bg-gray-800 h-1.5 rounded-full overflow-hidden">
               <div 
                 className="bg-teal-500 h-full rounded-full transition-all duration-500" 
                 style={{ width: `${(completedLessons.length / totalLessons) * 100}%` }}
@@ -66,7 +66,7 @@ const Tutorial = () => {
                             className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 flex items-center space-x-3 ${
                               isActive 
                                 ? 'bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-400 font-semibold' 
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800/50'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-gray-200 hover:bg-[#e7eee7] dark:hover:bg-gray-800/50'
                             }`}
                           >
                             {/* UPDATED CHECKMARK LOGIC */}
@@ -91,7 +91,7 @@ const Tutorial = () => {
 
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 min-w-0 pb-12">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-6 tracking-tight">
           {activeLesson.title}
         </h1>
         
@@ -107,7 +107,7 @@ const Tutorial = () => {
         {/* NEW: Extra Detailed Blocks (Array vs Linked List, for...of loop, etc.) */}
         {activeLesson.extraBlocks?.map((block, index) => (
           <div key={index} className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-3">{block.title}</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-gray-200 mb-3">{block.title}</h3>
             {block.code && <CodeBlock code={block.code} />}
             {(block.text || block.complexityBadge) && (
               <div className="flex items-center space-x-3 mt-3 text-sm text-gray-600 dark:text-gray-400">
@@ -126,24 +126,24 @@ const Tutorial = () => {
         {/* NEW: Comparison Table */}
         {activeLesson.comparisonTable && (
           <div className="mb-10 mt-8">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Comparison Table</h3>
-            <div className="overflow-x-auto border border-gray-200 dark:border-gray-800 rounded-xl">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Comparison Table</h3>
+            <div className="overflow-x-auto border border-[#d8e2d7] dark:border-gray-800 rounded-xl">
               <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-800">
+                <thead className="bg-[#eef4ee] dark:bg-gray-900/50 border-b border-[#d8e2d7] dark:border-gray-800">
                   <tr>
                     {activeLesson.comparisonTable.headers.map((header, i) => (
                       <th key={i} className="px-6 py-4 font-semibold text-gray-700 dark:text-gray-300">{header}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-[#161616]">
+                <tbody className="divide-y divide-[#d8e2d7] dark:divide-gray-800 bg-[#fffdf8] dark:bg-[#161616]">
                   {activeLesson.comparisonTable.rows.map((row, i) => (
                     <tr key={i}>
                       {row.map((cell, j) => {
                         // Highlight O(1) in teal for visual pop
                         const isO1 = typeof cell === 'string' && cell.includes('O(1)');
                         return (
-                          <td key={j} className={`px-6 py-4 ${j === 0 ? 'text-gray-900 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400 font-mono'} ${isO1 ? 'text-teal-600 dark:text-teal-400 font-bold' : ''}`}>
+                          <td key={j} className={`px-6 py-4 ${j === 0 ? 'text-slate-900 dark:text-gray-200' : 'text-gray-600 dark:text-gray-400 font-mono'} ${isO1 ? 'text-teal-600 dark:text-teal-400 font-bold' : ''}`}>
                             {cell}
                           </td>
                         );
@@ -170,8 +170,8 @@ const Tutorial = () => {
 
         {/* NEW: Key Takeaways Section */}
         {activeLesson.keyTakeaway && (
-          <div className="mb-10 mt-8 bg-gray-50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-800 rounded-xl p-6 md:p-8">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="mb-10 mt-8 bg-[#f2f5f0] dark:bg-gray-900/30 border border-[#d8e2d7] dark:border-gray-800 rounded-xl p-6 md:p-8">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
               {activeLesson.keyTakeaway.title || "Key Takeaway"}
             </h3>
             <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -182,7 +182,7 @@ const Tutorial = () => {
                   const parts = paragraph.split(boldRegex);
                   return (
                     <p key={idx}>
-                      {parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="text-gray-900 dark:text-white">{part}</strong> : part)}
+                      {parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="text-slate-900 dark:text-white">{part}</strong> : part)}
                     </p>
                   );
                 }
@@ -193,11 +193,11 @@ const Tutorial = () => {
         )}
         
         {/* Next/Prev & MARK COMPLETE Buttons */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-gray-200 dark:border-gray-800 pt-8 transition-colors duration-300">
+        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#d8e2d7] dark:border-gray-800 pt-8 transition-colors duration-300">
           <button 
             disabled={activeLessonId === 1}
             onClick={() => setActiveLessonId(prev => Math.max(1, prev - 1))}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#e9f0e8] dark:bg-gray-800 text-slate-800 dark:text-white text-sm font-medium hover:bg-[#dfe8de] dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
           >
             ← Prev
           </button>
@@ -217,7 +217,7 @@ const Tutorial = () => {
           <button 
             disabled={activeLessonId === totalLessons}
             onClick={() => setActiveLessonId(prev => Math.min(totalLessons, prev + 1))}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-gray-800 dark:text-white text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-slate-800 dark:text-white text-sm font-medium hover:bg-[#e7eee7] dark:hover:bg-gray-800 disabled:opacity-50 transition-colors"
           >
             Next →
           </button>

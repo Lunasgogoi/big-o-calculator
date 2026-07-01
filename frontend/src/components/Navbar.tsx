@@ -14,18 +14,18 @@ export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage
       'rounded-lg px-3 py-2 font-medium transition-colors',
       isActive
         ? 'bg-emerald-500/10 text-emerald-600 dark:bg-teal-500/15 dark:text-teal-300'
-        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
+        : 'text-slate-600 hover:bg-[#e7eee7] hover:text-slate-950 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
     ].join(' ');
 
   return (
-    <nav className="w-full max-w-4xl flex justify-between items-center gap-4 pt-6 pb-6 border-b border-gray-100 dark:border-gray-800 mb-8 transition-colors duration-300">
+    <nav className="w-full max-w-4xl flex justify-between items-center gap-4 pt-6 pb-6 border-b border-[#dfe7df] dark:border-gray-800 mb-8 transition-colors duration-300">
       <Link 
         to="/" 
         onClick={() => {
           setCode('');
           setLanguage('python');
         }} 
-        className="text-2xl font-serif font-bold tracking-tight text-gray-900 dark:text-white hover:opacity-80 transition"
+        className="text-2xl font-serif font-bold tracking-tight text-slate-900 dark:text-white hover:opacity-80 transition"
       >
         Big O Calc
       </Link>
@@ -37,7 +37,7 @@ export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage
         
         <button 
           onClick={() => setIsDarkMode(!isDarkMode)}
-          className="ml-2 rounded-lg bg-gray-100 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 cursor-pointer"
+          className="ml-2 rounded-lg bg-[#e9f0e8] px-3 py-2 font-medium text-slate-700 transition-colors hover:bg-[#dfe8de] dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 cursor-pointer"
           aria-label="Toggle theme"
           title="Toggle Theme"
         >
