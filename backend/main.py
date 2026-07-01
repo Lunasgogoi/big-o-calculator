@@ -14,7 +14,6 @@ from core.analyzer import analyze_static_complexity
 load_dotenv()
 
 app = FastAPI(title="Big O Analyzer API")
-MAX_CODE_LENGTH = 1500
 
 
 def get_allowed_origins() -> list[str]:
@@ -50,9 +49,6 @@ def build_static_payload(static_analysis):
 async def analyze_code(submission: CodeSubmission):
     if not submission.code.strip():
         raise HTTPException(status_code=400, detail="No code provided")
-
-    if len(submission.code) > MAX_CODE_LENGTH:
-        raise HTTPException(status_code=400, detail=f"Code must be {MAX_CODE_LENGTH} characters or fewer")
 
     try:
         root_node = code_parser.parse_code(submission.code, submission.language)

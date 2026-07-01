@@ -7,8 +7,6 @@ import CodeEditor from '../components/CodeEditor';
 import toast from 'react-hot-toast';
 import type { AnalysisResult } from '../components/ResultPanel';
 
-const MAX_CODE_LENGTH = 1500;
-
 interface HomeProps {
   code: string;
   setCode: (code: string) => void;
@@ -21,15 +19,7 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCodeChange = (nextCode: string) => {
-    if (nextCode.length <= MAX_CODE_LENGTH) {
-      setCode(nextCode);
-      return;
-    }
-
-    setCode(nextCode.slice(0, MAX_CODE_LENGTH));
-    if (code.length < MAX_CODE_LENGTH) {
-      toast.error(`Code is limited to ${MAX_CODE_LENGTH.toLocaleString()} characters.`);
-    }
+    setCode(nextCode);
   };
 
   const handleCalculate = async () => {
@@ -38,11 +28,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
       return;
     } 
 
-    if (code.length > MAX_CODE_LENGTH) {
-      toast.error(`Code must be ${MAX_CODE_LENGTH.toLocaleString()} characters or fewer.`);
-      return;
-    }
-  
     setIsLoading(true);
     setResult(null);
 
@@ -100,17 +85,12 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
               <option value="cpp" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C++</option>
             </select>
           </div>
-          <div className={[
-            'rounded-full border px-3 py-1.5 font-medium',
-            code.length >= MAX_CODE_LENGTH
-              ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700/60 dark:bg-amber-950/30 dark:text-amber-300'
-              : 'border-gray-200 bg-white text-gray-500 dark:border-gray-700 dark:bg-[#202020] dark:text-gray-400',
-          ].join(' ')}>
-            {code.length} / {MAX_CODE_LENGTH.toLocaleString()}
+          <div className="rounded-full border border-gray-200 bg-white px-3 py-1.5 font-medium text-gray-500 dark:border-gray-700 dark:bg-[#202020] dark:text-gray-400">
+            {code.length.toLocaleString()} chars
           </div>
         </div>
         
-        <CodeEditor code={code} setCode={handleCodeChange} language={language} maxLength={MAX_CODE_LENGTH} />
+        <CodeEditor code={code} setCode={handleCodeChange} language={language} />
       </div>
 
       <button 
@@ -138,10 +118,6 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
           </ol>
           
           <div className="space-y-3">
-            <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
-              <span className="font-bold text-gray-800 dark:text-gray-300">Tip:</span> Keep your code under 1,500 characters for best results. Focus on the core algorithm rather than boilerplate code.
-            </div>
-            
             <div className="bg-gray-50 dark:bg-[#121212] border border-gray-100 dark:border-gray-800 p-5 rounded-lg text-sm text-gray-600 dark:text-gray-400 leading-relaxed shadow-sm">
               <span className="font-bold text-gray-800 dark:text-gray-300">Tip:</span> For the most accurate analysis, use standard naming conventions (e.g., <code>adj</code>, <code>dp</code>, <code>pq</code>, <code>dfs</code>). If the engine gets confused by unusual variable names, our AI will attempt to step in and correct the results!
             </div>

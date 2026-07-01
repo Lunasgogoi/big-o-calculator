@@ -14,13 +14,12 @@ interface CodeEditorProps {
   code: string;
   setCode: (code: string) => void;
   language: string;
-  maxLength?: number;
 }
 
 const editorModule = EditorComponent as EditorModule;
 const Editor = editorModule.default ?? EditorComponent;
 
-export default function CodeEditor({ code, setCode, language, maxLength }: CodeEditorProps) {
+export default function CodeEditor({ code, setCode, language }: CodeEditorProps) {
   const highlightCode = (code: string) => {
     const grammar = Prism.languages[language] || Prism.languages.python;
     return Prism.highlight(code, grammar, language);
@@ -33,7 +32,6 @@ export default function CodeEditor({ code, setCode, language, maxLength }: CodeE
       <Editor
         value={code}
         onValueChange={setCode}
-        maxLength={maxLength}
         highlight={highlightCode}
         padding={20}
         placeholder={placeholderText}

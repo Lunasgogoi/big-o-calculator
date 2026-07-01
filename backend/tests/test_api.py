@@ -34,18 +34,21 @@ class AnalyzeApiTests(unittest.TestCase):
         self.assertIn("matched_rules", body)
         self.assertGreaterEqual(len(body["analysis_steps"]), 1)
 
-    def test_analyze_rejects_code_over_character_limit(self):
+    def test_analyze_accepts_code_over_previous_character_limit(self):
+        code = "# " + ("x" * 1600) + "\ndef f(nums):\n    for item in nums:\n        print(item)\n"
+
         response = self.client.post(
             "/api/analyze",
             json={
                 "language": "python",
-                "code": "x" * 1501,
+                "code": code,
             },
         )
         body = response.json()
 
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(body["detail"], "Code must be 1500 characters or fewer")
+        self.assertGreater(len(code), 1500)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(body["status"], "success")
 
     def test_ai_failure_returns_static_analysis_warning(self):
         failing_client = Mock()
