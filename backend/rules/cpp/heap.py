@@ -26,14 +26,17 @@ def analyze_heap(root_node, raw_code):
             return {
                 "time_complexity": "O(n log k)",
                 "space_complexity": "O(k)",
+                "evidence": ["Detected priority queue push/pop inside a loop bounded by k."],
             }
 
         return {
             "time_complexity": "O(n log n)",
             "space_complexity": "O(n)",
+            "evidence": ["Detected priority queue or heap operation inside a loop."],
         }
 
     return {
         "time_complexity": "O(log n)",
         "space_complexity": "O(1)",
+        "evidence": ["Detected a single priority queue or heap operation."],
     }

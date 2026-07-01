@@ -96,11 +96,19 @@ def rule_match_from_legacy(
     if not time_complexity or not space_complexity:
         return None
 
+    rule_evidence = result.get("evidence")
+    if isinstance(rule_evidence, str):
+        normalized_evidence = [rule_evidence]
+    elif isinstance(rule_evidence, list) and all(isinstance(item, str) for item in rule_evidence):
+        normalized_evidence = rule_evidence
+    else:
+        normalized_evidence = evidence
+
     return RuleMatch(
         rule_name=rule_name,
         time_complexity=time_complexity,
         space_complexity=space_complexity,
         confidence=confidence,
-        evidence=evidence or [f"{rule_name} matched {time_complexity} time and {space_complexity} space."],
+        evidence=normalized_evidence or [f"{rule_name} matched {time_complexity} time and {space_complexity} space."],
         is_base_rule=is_base_rule,
     )

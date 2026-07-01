@@ -154,6 +154,155 @@ def bfs(adj):
         self.assertEqual(result.space_complexity, "O(V + E)")
         self.assertEqual(result.dominant_rule, "graph_traversal")
 
+    def test_python_bellman_ford_detects_vertex_edge_complexity(self):
+        result = self.analyze(
+            """
+def bellman_ford(n, edges, source):
+    dist = [float("inf")] * n
+    dist[source] = 0
+    for _ in range(n - 1):
+        for u, v, weight in edges:
+            if dist[u] + weight < dist[v]:
+                dist[v] = dist[u] + weight
+    return dist
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(V * E)")
+        self.assertEqual(result.space_complexity, "O(V)")
+        self.assertEqual(result.dominant_rule, "bellman_ford")
+
+    def test_python_floyd_warshall_detects_cubic_with_matrix_space(self):
+        result = self.analyze(
+            """
+def floyd_warshall(graph):
+    n = len(graph)
+    dist = [[graph[i][j] for j in range(n)] for i in range(n)]
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+    return dist
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(V^3)")
+        self.assertEqual(result.space_complexity, "O(V^2)")
+        self.assertEqual(result.dominant_rule, "floyd_warshall")
+
+    def test_python_floyd_warshall_detects_cubic_in_place_space(self):
+        result = self.analyze(
+            """
+def floyd_warshall_in_place(dist):
+    n = len(dist)
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+    return dist
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(V^3)")
+        self.assertEqual(result.space_complexity, "O(1)")
+        self.assertEqual(result.dominant_rule, "floyd_warshall")
+
+    def test_python_2d_tabulation_beats_generic_matrix_rule(self):
+        result = self.analyze(
+            """
+class Solution:
+    def maxDotProduct(self, n, m, a, b):
+        dp = [[float('-inf') for _ in range(m + 1)] for _ in range(n + 1)]
+
+        for i in range(n + 1):
+            dp[i][m] = 0
+
+        for i in range(n - 1, -1, -1):
+            for j in range(m - 1, -1, -1):
+                take = a[i] * b[j] + dp[i + 1][j + 1]
+                skip = dp[i + 1][j]
+                dp[i][j] = max(take, skip)
+
+        return dp[0][0]
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(N * M)")
+        self.assertEqual(result.space_complexity, "O(N * M)")
+        self.assertEqual(result.dominant_rule, "tabulation")
+        self.assertIn("2D DP", result.evidence[0])
+
+    def test_python_2d_memoization_beats_iterator_and_base_rules(self):
+        result = self.analyze(
+            """
+class Solution:
+    def maxDotProduct(self, n, m, a, b):
+        dp = [[-1 for _ in range(m + 1)] for _ in range(n + 1)]
+
+        def solve(i, j):
+            if j == m:
+                return 0
+
+            if i == n:
+                return float('-inf')
+
+            if dp[i][j] != -1:
+                return dp[i][j]
+
+            take = a[i] * b[j] + solve(i + 1, j + 1)
+            skip = solve(i + 1, j)
+
+            dp[i][j] = max(take, skip)
+            return dp[i][j]
+
+        return solve(0, 0)
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(N * M)")
+        self.assertEqual(result.space_complexity, "O(N * M)")
+        self.assertEqual(result.dominant_rule, "dynamic_programming")
+        self.assertIn("memoization", result.evidence[0])
+
+    def test_python_nested_branching_recursion_beats_scalar_max_call(self):
+        result = self.analyze(
+            """
+class Solution:
+    def maxDotProduct(self, n, m, a, b):
+        def solve(i, j):
+            if j == m:
+                return 0
+
+            if i == n:
+                return float('-inf')
+
+            take = a[i] * b[j] + solve(i + 1, j + 1)
+            skip = solve(i + 1, j)
+
+            return max(take, skip)
+
+        return solve(0, 0)
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(2^n)")
+        self.assertEqual(result.space_complexity, "O(n)")
+        self.assertEqual(result.dominant_rule, "recursion")
+        self.assertIn("branching", result.evidence[0])
+        self.assertNotIn("built_in_iterators", {match.rule_name for match in result.matches})
+
+    def test_python_iterable_max_still_counts_as_hidden_iteration(self):
+        result = self.analyze(
+            """
+def largest(nums):
+    return max(nums)
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n)")
+        self.assertEqual(result.dominant_rule, "built_in_iterators")
+
     def test_python_bounded_heap_uses_k_complexity(self):
         result = self.analyze(
             """
@@ -320,6 +469,170 @@ void bfs(vector<vector<int>>& adj) {
         self.assertEqual(result.space_complexity, "O(V + E)")
         self.assertEqual(result.dominant_rule, "graph_traversal")
 
+    def test_cpp_bellman_ford_detects_vertex_edge_complexity(self):
+        result = self.analyze_cpp(
+            """
+vector<int> bellmanFord(int n, vector<array<int, 3>>& edges, int source) {
+    vector<int> dist(n, INF);
+    dist[source] = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (auto edge : edges) {
+            int u = edge[0], v = edge[1], weight = edge[2];
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+            }
+        }
+    }
+    return dist;
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(V * E)")
+        self.assertEqual(result.space_complexity, "O(V)")
+        self.assertEqual(result.dominant_rule, "bellman_ford")
+
+    def test_cpp_floyd_warshall_detects_cubic_with_matrix_space(self):
+        result = self.analyze_cpp(
+            """
+vector<vector<int>> floydWarshall(vector<vector<int>>& graph) {
+    int n = graph.size();
+    vector<vector<int>> dist = graph;
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+            }
+        }
+    }
+    return dist;
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(V^3)")
+        self.assertEqual(result.space_complexity, "O(V^2)")
+        self.assertEqual(result.dominant_rule, "floyd_warshall")
+
+    def test_cpp_floyd_warshall_detects_cubic_in_place_space(self):
+        result = self.analyze_cpp(
+            """
+void floydWarshallInPlace(vector<vector<int>>& dist) {
+    int n = dist.size();
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(V^3)")
+        self.assertEqual(result.space_complexity, "O(1)")
+        self.assertEqual(result.dominant_rule, "floyd_warshall")
+
+    def test_cpp_backtracking_detects_factorial_permutations(self):
+        result = self.analyze_cpp(
+            """
+void permute(vector<int>& nums, vector<int>& path, vector<vector<int>>& out) {
+    if (path.size() == nums.size()) {
+        out.push_back(path);
+        return;
+    }
+    for (int x : nums) {
+        path.push_back(x);
+        permute(nums, path, out);
+        path.pop_back();
+    }
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n!)")
+        self.assertEqual(result.space_complexity, "O(n)")
+        self.assertEqual(result.dominant_rule, "backtracking")
+
+    def test_cpp_binary_tree_bfs_uses_linear_frontier_space(self):
+        result = self.analyze_cpp(
+            """
+vector<int> levelOrder(TreeNode* root) {
+    queue<TreeNode*> q;
+    vector<int> values;
+    q.push(root);
+    while (!q.empty()) {
+        TreeNode* node = q.front();
+        q.pop();
+        values.push_back(node->val);
+        if (node->left) q.push(node->left);
+        if (node->right) q.push(node->right);
+    }
+    return values;
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n)")
+        self.assertEqual(result.space_complexity, "O(n)")
+        self.assertEqual(result.dominant_rule, "binary_tree")
+
+    def test_cpp_stl_iterator_algorithm_detects_hidden_linear_scan(self):
+        result = self.analyze_cpp(
+            """
+int total(vector<int>& nums) {
+    return accumulate(nums.begin(), nums.end(), 0);
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n)")
+        self.assertEqual(result.space_complexity, "O(1)")
+        self.assertEqual(result.dominant_rule, "built_in_iterators")
+        self.assertIn("accumulate", result.evidence[0])
+
+    def test_cpp_sieve_detects_n_log_log_n(self):
+        result = self.analyze_cpp(
+            """
+vector<bool> sieve(int n) {
+    vector<bool> is_prime(n + 1, true);
+    for (int i = 2; i * i <= n; i++) {
+        if (is_prime[i]) {
+            for (int j = i * i; j <= n; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+    return is_prime;
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n log log n)")
+        self.assertEqual(result.space_complexity, "O(n)")
+        self.assertEqual(result.dominant_rule, "sieve")
+
+    def test_cpp_tabulation_detects_bottom_up_dp_fill(self):
+        result = self.analyze_cpp(
+            """
+int fib(int n) {
+    vector<int> dp(n + 1, 0);
+    dp[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+    return dp[n];
+}
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n)")
+        self.assertEqual(result.space_complexity, "O(n)")
+        self.assertEqual(result.dominant_rule, "tabulation")
+
     def test_cpp_priority_queue_loop(self):
         result = self.analyze_cpp(
             """
@@ -373,7 +686,7 @@ void inorder(TreeNode* root) {
 
         self.assertEqual(result.time_complexity, "O(n)")
         self.assertEqual(result.space_complexity, "O(h)")
-        self.assertEqual(result.dominant_rule, "recursion")
+        self.assertEqual(result.dominant_rule, "binary_tree")
 
 
 if __name__ == "__main__":

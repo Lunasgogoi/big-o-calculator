@@ -26,10 +26,18 @@ def analyze_floyd_warshall(root_node, raw_code):
         )
 
         if allocates_memory:
-            return {"time_complexity": "O(V^3)", "space_complexity": "O(V^2)"}
+            return {
+                "time_complexity": "O(V^3)",
+                "space_complexity": "O(V^2)",
+                "evidence": ["Detected nested k/i/j matrix relaxation with copied 2D distance storage."],
+            }
         else:
             # If no new matrix is created, it's modifying in-place!
-            return {"time_complexity": "O(V^3)", "space_complexity": "O(1)"}
+            return {
+                "time_complexity": "O(V^3)",
+                "space_complexity": "O(1)",
+                "evidence": ["Detected nested k/i/j matrix relaxation updating the matrix in place."],
+            }
 
     return None
 

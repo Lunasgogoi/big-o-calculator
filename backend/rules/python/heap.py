@@ -46,6 +46,7 @@ def analyze_heap(root_node, raw_code):
             return {
                 "time_complexity": "O(n log k)",
                 "space_complexity": "O(k)",
+                "evidence": ["Detected heapq push/trim operations inside a loop bounded by k."],
             }
 
         # Are we pushing/popping inside a loop? (e.g., adding N elements to a heap)
@@ -53,12 +54,14 @@ def analyze_heap(root_node, raw_code):
             return {
                 "time_complexity": "O(n log n)",
                 "space_complexity": "O(n)", # Heaps require an array of size N
+                "evidence": ["Detected heapq operation inside a loop, so each of n items pays heap logarithmic cost."],
             }
         # Otherwise, just a single operation or heapify
         else:
             return {
                 "time_complexity": "O(log n)",
                 "space_complexity": "O(1)", 
+                "evidence": ["Detected a single heapq operation with logarithmic heap adjustment."],
             }
             
     return None

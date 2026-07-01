@@ -85,30 +85,32 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         </p>
       </header>
 
-      <div className="bg-white dark:bg-[#161616] rounded-xl border border-gray-300 dark:border-gray-800 p-4 mb-6 shadow-xl dark:shadow-2xl transition-colors duration-300">
-        <div className="flex justify-between items-center mb-4 text-xs text-gray-500 border-b border-gray-200 dark:border-gray-800 pb-3">
-          <div className="flex space-x-2 items-center">
-            <div className="w-3 h-3 rounded-full bg-red-400 dark:bg-gray-700"></div>
-            <div className="w-3 h-3 rounded-full bg-amber-400 dark:bg-gray-700"></div>
-            <div className="w-3 h-3 rounded-full bg-green-400 dark:bg-gray-700"></div>
-            
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg shadow-gray-200/60 transition-colors duration-300 dark:border-gray-800 dark:bg-[#141414] dark:shadow-2xl dark:shadow-black/20 mb-6">
+        <div className="flex flex-col gap-3 border-b border-gray-200 bg-gray-50/80 px-5 py-4 text-xs text-gray-500 dark:border-gray-800 dark:bg-[#181818] sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Language</span>
             <select 
               title="Select programming language"
               aria-label="Select programming language"
               value={language} 
               onChange={(e) => setLanguage(e.target.value)}
-              className="ml-4 bg-gray-100 dark:bg-[#1e1e1e] border border-gray-200 dark:border-gray-700 rounded-md px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+              className="bg-white dark:bg-[#202020] border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm font-semibold text-gray-800 dark:text-gray-200 hover:border-gray-400 dark:hover:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500/70 focus:border-transparent transition-all cursor-pointer"
             >
               <option value="python" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">Python</option>
               <option value="cpp" className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-200">C++</option>
             </select>
           </div>
-          <div className={code.length >= MAX_CODE_LENGTH ? 'font-semibold text-amber-600 dark:text-amber-400' : undefined}>
+          <div className={[
+            'rounded-full border px-3 py-1.5 font-medium',
+            code.length >= MAX_CODE_LENGTH
+              ? 'border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700/60 dark:bg-amber-950/30 dark:text-amber-300'
+              : 'border-gray-200 bg-white text-gray-500 dark:border-gray-700 dark:bg-[#202020] dark:text-gray-400',
+          ].join(' ')}>
             {code.length} / {MAX_CODE_LENGTH.toLocaleString()}
           </div>
         </div>
         
-        <CodeEditor code={code} setCode={handleCodeChange} language={language} />
+        <CodeEditor code={code} setCode={handleCodeChange} language={language} maxLength={MAX_CODE_LENGTH} />
       </div>
 
       <button 

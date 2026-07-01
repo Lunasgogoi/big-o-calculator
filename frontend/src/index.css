@@ -66,6 +66,16 @@ body {
   background-color: #9ca3af; /* Light mode hover: gray-400 */
 }
 
+.code-editor-textarea::placeholder {
+  color: #94a3b8;
+  opacity: 0.55;
+}
+
+.dark .code-editor-textarea::placeholder {
+  color: #64748b;
+  opacity: 0.45;
+}
+
 /* Dark mode overrides */
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #4b5563; /* Dark mode: gray-600 */

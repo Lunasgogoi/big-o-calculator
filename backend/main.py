@@ -1,20 +1,17 @@
-import json
 import os
 import traceback
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from google import genai
 from pydantic import BaseModel
 
+from core import ai_client
 from core import parser as code_parser
 from core.analyzer import analyze_static_complexity
 
 
 load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key) if api_key else None
 
 app = FastAPI(title="Big O Analyzer API")
 MAX_CODE_LENGTH = 1500
@@ -37,12 +34,6 @@ app.add_middleware(
 class CodeSubmission(BaseModel):
     code: str
     language: str = "python"
-
-
-class AIAnalysis(BaseModel):
-    time_complexity: str
-    space_complexity: str
-    explanation: str
 
 
 def build_static_payload(static_analysis):
@@ -71,54 +62,8 @@ async def analyze_code(submission: CodeSubmission):
         static_space = static_analysis.space_complexity
         static_payload = build_static_payload(static_analysis)
 
-        if not client:
-            return {
-                "status": "success",
-                "time_complexity": static_time,
-                "space_complexity": static_space,
-                **static_payload,
-                "ai_suggestion": "AI suggestions are disabled. Please add a GEMINI_API_KEY to your .env file.",
-            }
-
-        prompt = f"""
-        You are an expert algorithm analyzer.
-        Code to analyze:
-        {submission.code}
-
-        The static AST engine estimated -> Time: {static_time}, Space: {static_space}
-        Static confidence: {static_analysis.confidence_label} ({static_analysis.confidence:.2f})
-        Static rule used: {static_analysis.dominant_rule}
-        Static evidence: {'; '.join(static_analysis.evidence)}
-
-        Verify this estimate. If confidence is limited or the code is ambiguous, say so.
-        If the estimate is likely wrong, correct it.
-
-        CRITICAL RULES:
-        1. AUXILIARY SPACE ONLY: For Space Complexity, calculate auxiliary space only.
-           Ignore input storage such as an existing array, matrix, graph, or adjacency list.
-
-        CRITICAL FORMATTING RULE FOR THE EXPLANATION:
-        You MUST divide your 'explanation' string into exactly two sections separated by a double newline (\\n\\n).
-        Format it exactly like this:
-
-        Time Complexity: [Explain how the time complexity was derived]
-
-        Space Complexity: [Explain how the auxiliary space complexity was derived]
-
-        If you overrode the static engine's guess, mention why in the relevant section.
-        """
-
         try:
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt,
-                config={
-                    "response_mime_type": "application/json",
-                    "response_schema": AIAnalysis,
-                },
-            )
-
-            ai_data = json.loads(response.text)
+            ai_data = ai_client.get_ai_suggestion(submission.code, static_analysis)
             final_time = ai_data.get("time_complexity", static_time)
             final_space = ai_data.get("space_complexity", static_space)
             final_explanation = ai_data.get("explanation", "Analysis complete.")
@@ -126,10 +71,7 @@ async def analyze_code(submission: CodeSubmission):
         except Exception:
             final_time = static_time
             final_space = static_space
-            final_explanation = (
-                "AI explanation unavailable; static analysis shown.\n\n"
-                "The static analyzer result is still returned with confidence metadata and matched-rule evidence."
-            )
+            final_explanation = ai_client.AI_FALLBACK_EXPLANATION
 
         return {
             "status": "success",

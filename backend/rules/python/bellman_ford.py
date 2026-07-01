@@ -9,7 +9,11 @@ def analyze_bellman_ford(root_node, raw_code):
 
     # Signature 1: The explicit algorithm name
     if 'bellman' in raw_lower:
-        return {"time_complexity": "O(V * E)", "space_complexity": "O(V)"}
+        return {
+            "time_complexity": "O(V * E)",
+            "space_complexity": "O(V)",
+            "evidence": ["Detected Bellman-Ford by name."],
+        }
 
     # Signature 2: The Relaxation Math + The V-1 Loop
     # We look for dist[x] + w < dist[y]
@@ -19,6 +23,10 @@ def analyze_bellman_ford(root_node, raw_code):
     has_v_minus_1_loop = "range(v-1)" in compressed or "range(n-1)" in compressed
 
     if is_relaxing and has_v_minus_1_loop:
-        return {"time_complexity": "O(V * E)", "space_complexity": "O(V)"}
+        return {
+            "time_complexity": "O(V * E)",
+            "space_complexity": "O(V)",
+            "evidence": ["Detected distance edge relaxation inside a V - 1 outer loop."],
+        }
 
     return None

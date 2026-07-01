@@ -14,12 +14,13 @@ interface CodeEditorProps {
   code: string;
   setCode: (code: string) => void;
   language: string;
+  maxLength?: number;
 }
 
 const editorModule = EditorComponent as EditorModule;
 const Editor = editorModule.default ?? EditorComponent;
 
-export default function CodeEditor({ code, setCode, language }: CodeEditorProps) {
+export default function CodeEditor({ code, setCode, language, maxLength }: CodeEditorProps) {
   const highlightCode = (code: string) => {
     const grammar = Prism.languages[language] || Prism.languages.python;
     return Prism.highlight(code, grammar, language);
@@ -28,20 +29,22 @@ export default function CodeEditor({ code, setCode, language }: CodeEditorProps)
   const placeholderText = `# Paste your code here\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)`;
 
   return (
-    <div className="w-full bg-transparent font-mono text-sm relative max-h-[500px] overflow-y-auto custom-scrollbar rounded-b-md">
+    <div className="w-full bg-transparent font-mono text-sm relative max-h-[500px] overflow-y-auto custom-scrollbar">
       <Editor
         value={code}
         onValueChange={setCode}
+        maxLength={maxLength}
         highlight={highlightCode}
-        padding={14}
+        padding={20}
         placeholder={placeholderText}
         style={{
           fontFamily: '"Fira Code", "JetBrains Mono", Consolas, monospace',
           fontSize: 14,
-          minHeight: '250px',
+          lineHeight: 1.7,
+          minHeight: '320px',
           backgroundColor: 'transparent',
         }}
-        textareaClassName="focus:outline-none"
+        textareaClassName="focus:outline-none code-editor-textarea"
       />
     </div>
   );

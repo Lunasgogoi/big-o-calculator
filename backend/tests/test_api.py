@@ -4,12 +4,17 @@ from unittest.mock import Mock, patch
 from fastapi.testclient import TestClient
 
 import main
+from core import ai_client
 
 
 class AnalyzeApiTests(unittest.TestCase):
     def setUp(self):
-        main.client = None
+        self.original_ai_client = ai_client.client
+        ai_client.client = None
         self.client = TestClient(main.app)
+
+    def tearDown(self):
+        ai_client.client = self.original_ai_client
 
     def test_analyze_returns_confidence_metadata(self):
         response = self.client.post(
@@ -45,7 +50,7 @@ class AnalyzeApiTests(unittest.TestCase):
     def test_ai_failure_returns_static_analysis_warning(self):
         failing_client = Mock()
         failing_client.models.generate_content.side_effect = ValueError("bad json")
-        main.client = failing_client
+        ai_client.client = failing_client
 
         response = self.client.post(
             "/api/analyze",

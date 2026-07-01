@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface NavbarProps {
@@ -9,8 +9,16 @@ interface NavbarProps {
 }
 
 export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage }: NavbarProps) {
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    [
+      'rounded-lg px-3 py-2 font-medium transition-colors',
+      isActive
+        ? 'bg-emerald-500/10 text-emerald-600 dark:bg-teal-500/15 dark:text-teal-300'
+        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white',
+    ].join(' ');
+
   return (
-    <nav className="w-full max-w-4xl flex justify-between items-center pt-6 pb-6 border-b border-gray-100 dark:border-gray-800 mb-8 transition-colors duration-300">
+    <nav className="w-full max-w-4xl flex justify-between items-center gap-4 pt-6 pb-6 border-b border-gray-100 dark:border-gray-800 mb-8 transition-colors duration-300">
       <Link 
         to="/" 
         onClick={() => {
@@ -21,15 +29,15 @@ export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage
       >
         Big O Calc
       </Link>
-      <div className="flex items-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
-        <Link to="/guide" className="hover:text-gray-900 dark:hover:text-white transition">Guide</Link>
-        <Link to="/examples" className="hover:text-gray-900 dark:hover:text-white transition">Examples</Link>
-        <Link to="/tutorial" className="hover:text-gray-900 dark:hover:text-white transition">Tutorial</Link>
-        <Link to="/faq" className="hover:text-gray-900 dark:hover:text-white transition">FAQ</Link>
+      <div className="flex items-center gap-2 text-sm">
+        <NavLink to="/guide" className={navLinkClass}>Guide</NavLink>
+        <NavLink to="/examples" className={navLinkClass}>Examples</NavLink>
+        <NavLink to="/tutorial" className={navLinkClass}>Tutorial</NavLink>
+        <NavLink to="/faq" className={navLinkClass}>FAQ</NavLink>
         
         <button 
           onClick={() => setIsDarkMode(!isDarkMode)}
-          className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+          className="ml-2 rounded-lg bg-gray-100 px-3 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 cursor-pointer"
           aria-label="Toggle theme"
           title="Toggle Theme"
         >

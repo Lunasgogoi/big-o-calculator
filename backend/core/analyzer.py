@@ -4,28 +4,37 @@ from typing import Optional
 import rules.cpp.graph_traversal as cpp_graph
 import rules.python.graph_traversal as py_graph
 from core.models import COMPLEXITY_RANKS, RuleMatch, StaticAnalysisResult, rule_match_from_legacy
+from rules.cpp.backtracking import analyze_backtracking as analyze_cpp_backtracking
 from rules.cpp.base_loops import analyze_base_loops as analyze_cpp_base_loops
+from rules.cpp.bellman_ford import analyze_bellman_ford as analyze_cpp_bellman_ford
 from rules.cpp.bit_manipulation import analyze_bit_manipulation as analyze_cpp_bit_manipulation
+from rules.cpp.binary_trees import analyze_binary_tree as analyze_cpp_binary_tree
+from rules.cpp.built_in_iterators import analyze_built_in_iterators as analyze_cpp_built_in_iterators
 from rules.cpp.built_in_sort import analyze_sort_search as analyze_cpp_sort_search
 from rules.cpp.dsu import analyze_dsu as analyze_cpp_dsu
 from rules.cpp.dynamic_programming import analyze_dp as analyze_cpp_dp
+from rules.cpp.floyd_warshall import analyze_floyd_warshall as analyze_cpp_floyd_warshall
 from rules.cpp.heap import analyze_heap as analyze_cpp_heap
 from rules.cpp.logarithmic import analyze_logarithmic as analyze_cpp_logarithmic
 from rules.cpp.matrix import analyze_matrix as analyze_cpp_matrix
 from rules.cpp.monotonic_stack import analyze_monotonic_stack as analyze_cpp_monotonic_stack
 from rules.cpp.recursion import analyze_recursion as analyze_cpp_recursion
+from rules.cpp.sieve import analyze_sieve as analyze_cpp_sieve
 from rules.cpp.sliding_window import analyze_sliding_window as analyze_cpp_sliding_window
 from rules.cpp.sorting_search import analyze_sorting_search as analyze_cpp_sorting_search
 from rules.cpp.space_complexity import analyze_space_complexity as analyze_cpp_space_complexity
+from rules.cpp.tabulation import analyze_tabulation as analyze_cpp_tabulation
 from rules.python.advanced_graphs import analyze_advanced_graphs
 from rules.python.backtracking import analyze_backtracking
 from rules.python.base_loops import analyze_base_loops
+from rules.python.bellman_ford import analyze_bellman_ford
 from rules.python.bit_manipulation import analyze_bit_manipulation
 from rules.python.binary_trees import analyze_binary_tree
 from rules.python.built_in_iterators import analyze_built_in_iterators
 from rules.python.built_in_sort import analyze_sort_search
 from rules.python.dsu import analyze_dsu
 from rules.python.dynamic_programming import analyze_dp
+from rules.python.floyd_warshall import analyze_floyd_warshall
 from rules.python.heap import analyze_heap
 from rules.python.linked_list import analyze_linked_list
 from rules.python.logarithmic import analyze_logarithmic as py_logarithmic
@@ -45,6 +54,8 @@ RuleFunction = Callable[[object, str], Optional[dict]]
 
 
 PYTHON_RULES: list[tuple[str, RuleFunction, float, list[str]]] = [
+    ("floyd_warshall", analyze_floyd_warshall, 0.94, ["Detected Floyd-Warshall all-pairs shortest-path signals."]),
+    ("bellman_ford", analyze_bellman_ford, 0.92, ["Detected Bellman-Ford edge-relaxation signals."]),
     ("advanced_graphs", analyze_advanced_graphs, 0.92, ["Detected advanced graph algorithm signals."]),
     ("dsu", analyze_dsu, 0.92, ["Detected disjoint-set / union-find signals."]),
     ("graph_traversal", py_graph.analyze_graph_traversal, 0.9, ["Detected graph traversal signals."]),
@@ -70,17 +81,24 @@ PYTHON_RULES: list[tuple[str, RuleFunction, float, list[str]]] = [
 
 
 CPP_RULES: list[tuple[str, RuleFunction, float, list[str]]] = [
+    ("floyd_warshall", analyze_cpp_floyd_warshall, 0.9, ["Detected C++ Floyd-Warshall all-pairs shortest-path signals."]),
+    ("bellman_ford", analyze_cpp_bellman_ford, 0.88, ["Detected C++ Bellman-Ford edge-relaxation signals."]),
     ("dsu", analyze_cpp_dsu, 0.88, ["Detected C++ disjoint-set / union-find signals."]),
+    ("sieve", analyze_cpp_sieve, 0.9, ["Detected C++ sieve-style marking loop."]),
     ("graph_traversal", cpp_graph.analyze_graph_traversal, 0.86, ["Detected C++ graph traversal signals."]),
+    ("binary_tree", analyze_cpp_binary_tree, 0.86, ["Detected C++ binary tree traversal/search signals."]),
     ("sorting_search", analyze_cpp_sorting_search, 0.9, ["Detected C++ binary-search style halving control flow or STL binary search."]),
     ("built_in_sort", analyze_cpp_sort_search, 0.86, ["Detected C++ STL sorting call."]),
+    ("tabulation", analyze_cpp_tabulation, 0.84, ["Detected C++ bottom-up dynamic-programming table fill."]),
     ("dynamic_programming", analyze_cpp_dp, 0.78, ["Detected C++ dynamic-programming storage or memoization signals."]),
+    ("backtracking", analyze_cpp_backtracking, 0.84, ["Detected C++ recursive backtracking signals."]),
     ("sliding_window", analyze_cpp_sliding_window, 0.86, ["Detected C++ amortized sliding-window pointer movement."]),
     ("monotonic_stack", analyze_cpp_monotonic_stack, 0.86, ["Detected C++ monotonic-stack push/pop structure."]),
     ("matrix", analyze_cpp_matrix, 0.8, ["Detected C++ matrix traversal / allocation signals."]),
     ("heap", analyze_cpp_heap, 0.82, ["Detected C++ heap / priority-queue operation signals."]),
     ("bit_manipulation", analyze_cpp_bit_manipulation, 0.82, ["Detected C++ bit-manipulation loop signals."]),
     ("logarithmic", analyze_cpp_logarithmic, 0.84, ["Detected C++ logarithmic loop progression."]),
+    ("built_in_iterators", analyze_cpp_built_in_iterators, 0.76, ["Detected C++ hidden iteration in STL algorithm helper."]),
     ("recursion", analyze_cpp_recursion, 0.74, ["Detected C++ recursive call structure."]),
 ]
 
@@ -90,6 +108,8 @@ ADVANCED_COMPLEXITIES = {
     "O(E log V)",
     "O(E log E)",
     "O(E * alpha(V))",
+    "O(V * E)",
+    "O(V^3)",
     "O(n log log n)",
 }
 
@@ -139,6 +159,9 @@ def _collect_python_matches(root_node: object, raw_code: str) -> list[RuleMatch]
     )
 
     matches = list(smart_matches)
+    if any(match.rule_name == "dynamic_programming" for match in matches):
+        matches = [match for match in matches if match.rule_name not in {"recursion", "backtracking"}]
+
     if base_match and _should_include_base_loop(base_match, smart_matches):
         matches.append(base_match)
 

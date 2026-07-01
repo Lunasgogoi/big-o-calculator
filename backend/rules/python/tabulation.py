@@ -1,5 +1,38 @@
 # backend/rules/tabulation.py
 
+def _normalized(raw_code):
+    return raw_code.lower().replace(" ", "").replace("\n", "")
+
+
+def detects_dp_table(raw_code):
+    """
+    Detects named bottom-up DP tables such as dp[i][j] filled inside loops.
+    """
+    normalized = _normalized(raw_code)
+    has_dp_name = "dp" in raw_code.lower() or "memo" in raw_code.lower() or "cache" in raw_code.lower()
+    has_table_allocation = (
+        "dp=[[" in normalized
+        or "memo=[[" in normalized
+        or "cache=[[" in normalized
+        or ("for_inrange" in normalized and "[[" in normalized)
+    )
+    has_2d_updates = (
+        "dp[" in normalized and "][" in normalized
+        or "memo[" in normalized and "][" in normalized
+        or "cache[" in normalized and "][" in normalized
+    )
+
+    if has_dp_name and has_table_allocation and has_2d_updates:
+        return "2d"
+
+    has_array_allocation = "dp=[" in normalized or "memo=[" in normalized or "cache=[" in normalized
+    has_1d_updates = "dp[" in normalized or "memo[" in normalized or "cache[" in normalized
+    if has_dp_name and has_array_allocation and has_1d_updates:
+        return "1d"
+
+    return None
+
+
 def detect_array_preallocation(node, code_bytes):
     """
     Looks for DP array pre-allocation like: dp = [0] * n
@@ -43,6 +76,21 @@ def analyze_tabulation(root_node, raw_code):
     Checks if the code uses Bottom-Up DP (Tabulation) via array pre-allocation.
     """
     code_bytes = bytes(raw_code, "utf8")
+    dp_table_dimension = detects_dp_table(raw_code)
+
+    if dp_table_dimension == "2d" and has_loops(root_node):
+        return {
+            "time_complexity": "O(N * M)",
+            "space_complexity": "O(N * M)",
+            "evidence": ["Detected bottom-up 2D DP table allocation and dp[i][j] updates."],
+        }
+
+    if dp_table_dimension == "1d" and has_loops(root_node):
+        return {
+            "time_complexity": "O(n)",
+            "space_complexity": "O(n)",
+            "evidence": ["Detected bottom-up 1D DP array allocation and indexed updates."],
+        }
     
     # Bottom-Up DP requires an array to be created...
     if detect_array_preallocation(root_node, code_bytes):
@@ -51,6 +99,7 @@ def analyze_tabulation(root_node, raw_code):
             return {
                 "time_complexity": "O(n)", 
                 "space_complexity": "O(n)", 
+                "evidence": ["Detected bottom-up DP-style preallocated array filled inside a loop."],
             }
             
     return None

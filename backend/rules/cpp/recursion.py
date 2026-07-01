@@ -45,16 +45,32 @@ def analyze_recursion(root_node, raw_code):
 
         recursive_calls = _count_calls(body_node, function_name, source)
         if recursive_calls > 0 and _has_tree_child_access(body_node, source):
-            return {"time_complexity": "O(n)", "space_complexity": "O(h)"}
+            return {
+                "time_complexity": "O(n)",
+                "space_complexity": "O(h)",
+                "evidence": ["Detected recursive traversal over left/right tree child pointers."],
+            }
 
         if recursive_calls == 1:
-            return {"time_complexity": "O(n)", "space_complexity": "O(n)"}
+            return {
+                "time_complexity": "O(n)",
+                "space_complexity": "O(n)",
+                "evidence": ["Detected one self-recursive call per activation."],
+            }
 
         if recursive_calls > 1:
             body_text = node_text(body_node, source).lower().replace(" ", "")
             if "/2" in body_text or ">>1" in body_text or "mid" in body_text:
-                return {"time_complexity": "O(n log n)", "space_complexity": "O(n)"}
+                return {
+                    "time_complexity": "O(n log n)",
+                    "space_complexity": "O(n)",
+                    "evidence": ["Detected multiple recursive calls with halving/divide-and-conquer signals."],
+                }
 
-            return {"time_complexity": "O(2^n)", "space_complexity": "O(n)"}
+            return {
+                "time_complexity": "O(2^n)",
+                "space_complexity": "O(n)",
+                "evidence": ["Detected recursive branching call pattern without halving progress."],
+            }
 
     return None

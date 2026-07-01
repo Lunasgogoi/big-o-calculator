@@ -29,6 +29,9 @@ python3 -m venv ../.venv
 Set `GEMINI_API_KEY` in `backend/.env` to enable AI explanations. Without it,
 the API still returns static analyzer results.
 
+Optionally set `GEMINI_MODEL` to change the Gemini model. The backend defaults
+to `gemini-2.5-flash-lite` for lower latency.
+
 Set `ALLOWED_ORIGINS` to a comma-separated allowlist for deployment:
 
 ```env

@@ -66,6 +66,8 @@ Create a .env file in the backend/ directory and add your Google Gemini API key:
 
 ```
 GEMINI_API_KEY=your_api_key_here
+# Optional. Defaults to gemini-2.5-flash-lite for lower latency.
+GEMINI_MODEL=gemini-2.5-flash-lite
 ```
 Start the FastAPI server:
 
@@ -101,7 +103,7 @@ Backend: Python, FastAPI, Pydantic, Tree-sitter
 
 Frontend: React, TypeScript, Tailwind CSS, React-Hot-Toast
 
-AI: Google Gemini Pro (google-generativeai)
+AI: Google Gemini API via `google-genai`
 
 
 
