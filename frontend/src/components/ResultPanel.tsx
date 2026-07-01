@@ -47,7 +47,7 @@ export default function ResultPanel({ result }: ResultPanelProps) {
   const visibleMatches = result.matched_rules?.slice(0, 4) ?? [];
 
   return (
-    <div className="border border-teal-500/40 rounded-xl p-8 bg-[#fffdf8] dark:bg-[#121212] mb-20 shadow-lg shadow-slate-200/60 transition-colors duration-300">
+    <div className="border border-teal-500/40 rounded-xl p-8 bg-[#fffdf8] dark:bg-[#121212] mb-20 shadow-lg shadow-slate-200/60 dark:shadow-none transition-colors duration-300">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between mb-6">
         <div>
           <h3 className="text-2xl font-serif font-bold text-slate-900 dark:text-white">Estimated Analysis</h3>
