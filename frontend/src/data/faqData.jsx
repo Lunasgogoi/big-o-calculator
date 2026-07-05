@@ -1,18 +1,7 @@
-// src/data/faqData.tsx
-import React from 'react';
+// src/data/faqData.jsx
 import { Link } from 'react-router-dom';
 
-export interface FAQItem {
-  question: string;
-  answer: React.ReactNode;
-}
-
-export interface FAQCategory {
-  categoryName: string;
-  questions: FAQItem[];
-}
-
-export const faqData: FAQCategory[] = [
+export const faqData = [
   {
     categoryName: "General Questions",
     questions: [

@@ -1,18 +1,4 @@
-import React from 'react';
-
-interface AnalysisStep {
-  label: string;
-  text: string;
-}
-
-interface AnalysisCardProps {
-  timeComplexity: string;
-  spaceComplexity: string;
-  steps: AnalysisStep[];
-  proTip?: string;
-}
-
-const AnalysisCard: React.FC<AnalysisCardProps> = ({ timeComplexity, spaceComplexity, steps, proTip }) => {
+const AnalysisCard = ({ timeComplexity, spaceComplexity, steps, proTip }) => {
   return (
     <div className="bg-[#fffdf8] dark:bg-[#262626]/50 border border-[#d8e2d7] dark:border-gray-700 rounded-xl p-6 md:p-8 shadow-sm shadow-slate-200/50 dark:shadow-none transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 pb-8 border-b border-[#d8e2d7] dark:border-gray-700 transition-colors duration-300">

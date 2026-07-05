@@ -1,19 +1,4 @@
-export interface Lesson {
-  id: number;
-  category: string;
-  title: string;
-  description: string;
-  codeSnippet?: string;
-  timeComplexity?: string;
-  spaceComplexity?: string;
-  analysisSteps?: { label: string; text: string }[];
-  proTip?: string;
-  extraBlocks?: { title: string; code?: string; text?: string; complexityBadge?: string }[];
-  comparisonTable?: { headers: string[]; rows: string[][] };
-  keyTakeaway?: { title?: string; text: string[] };
-}
-
-export const tutorialLessons: Lesson[] = [
+export const tutorialLessons = [
   {
     id: 1,
     category: "Basics",

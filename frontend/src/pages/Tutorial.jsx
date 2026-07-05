@@ -4,10 +4,10 @@ import CodeBlock from '../components/CodeBlock';
 import AnalysisCard from '../components/AnalysisCard';
 
 const Tutorial = () => {
-  const [activeLessonId, setActiveLessonId] = useState<number>(1);
+  const [activeLessonId, setActiveLessonId] = useState(1);
   
   // 1. Initialize completed lessons from localStorage
-  const [completedLessons, setCompletedLessons] = useState<number[]>(() => {
+  const [completedLessons, setCompletedLessons] = useState(() => {
     const saved = localStorage.getItem('completedLessons');
     return saved ? JSON.parse(saved) : [];
   });

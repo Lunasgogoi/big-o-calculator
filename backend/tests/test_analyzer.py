@@ -132,6 +132,36 @@ def level_order(root):
         self.assertEqual(result.space_complexity, "O(n)")
         self.assertEqual(result.dominant_rule, "binary_tree")
 
+    def test_python_iterative_bst_kth_largest_is_not_backtracking(self):
+        result = self.analyze(
+            """
+class Solution22:
+    def kthLargest(self, root, k):
+        stack = []
+        curr = root
+
+        while curr or stack:
+            while curr:
+                stack.append(curr)
+                curr = curr.right
+
+            curr = stack.pop()
+            k -= 1
+
+            if k == 0:
+                return curr.data
+
+            curr = curr.left
+
+        return -1
+"""
+        )
+
+        self.assertEqual(result.time_complexity, "O(n)")
+        self.assertEqual(result.space_complexity, "O(h)")
+        self.assertEqual(result.dominant_rule, "binary_tree")
+        self.assertNotIn("backtracking", {match.rule_name for match in result.matches})
+
     def test_python_graph_bfs_detects_vertex_edge_complexity(self):
         result = self.analyze(
             """

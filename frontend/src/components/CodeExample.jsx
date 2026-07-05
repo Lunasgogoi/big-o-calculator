@@ -1,20 +1,9 @@
-interface CodeExampleProps {
-  title: string;
-  badgeTitle: string;
-  lightBg?: string;
-  lightText?: string;
-  darkBg?: string;
-  darkText?: string;
-  code: string;
-  explanation: string;
-}
-
 export default function CodeExample({
   title,
   badgeTitle,
   code,
   explanation,
-}: CodeExampleProps) {
+}) {
   return (
     <div className="min-w-0 mb-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between mb-3">

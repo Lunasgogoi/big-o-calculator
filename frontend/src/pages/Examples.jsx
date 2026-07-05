@@ -1,9 +1,9 @@
-// src/pages/Examples.tsx
+// src/pages/Examples.jsx
 // import React from 'react';
 import { Link } from 'react-router-dom';
 import { examplesData } from '../data/examplesData';
 
-const getBadgeStyles = (color: string) => {
+const getBadgeStyles = (color) => {
   switch (color) {
     case 'green': return 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900/60';
     case 'orange': return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/60';

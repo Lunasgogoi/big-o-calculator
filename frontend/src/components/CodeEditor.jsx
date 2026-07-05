@@ -6,21 +6,11 @@ import 'prismjs/components/prism-c';
 import 'prismjs/components/prism-cpp';
 import 'prismjs/themes/prism-tomorrow.css';
 
-type EditorModule = typeof EditorComponent & {
-  default?: typeof EditorComponent;
-};
-
-interface CodeEditorProps {
-  code: string;
-  setCode: (code: string) => void;
-  language: string;
-}
-
-const editorModule = EditorComponent as EditorModule;
+const editorModule = EditorComponent;
 const Editor = editorModule.default ?? EditorComponent;
 
-export default function CodeEditor({ code, setCode, language }: CodeEditorProps) {
-  const highlightCode = (code: string) => {
+export default function CodeEditor({ code, setCode, language }) {
+  const highlightCode = (code) => {
     const grammar = Prism.languages[language] || Prism.languages.python;
     return Prism.highlight(code, grammar, language);
   };

@@ -1,16 +1,6 @@
-// src/data/guideData.ts
+// src/data/guideData.js
 
-export interface ComplexityItem {
-  id: string;
-  title: string;
-  badgeText: string;
-  badgeColor: 'green' | 'blue' | 'orange' | 'red';
-  description: string;
-  code: string;
-  examplesList?: string;
-}
-
-export const timeComplexities: ComplexityItem[] = [
+export const timeComplexities = [
   {
     id: "o-1",
     title: "O(1) - Constant Time",
@@ -154,7 +144,7 @@ def get_all_subsets(arr):
   }
 ];
 
-export const spaceComplexities: ComplexityItem[] = [
+export const spaceComplexities = [
   {
     id: "space-o1",
     title: "O(1) Space - Constant Space",

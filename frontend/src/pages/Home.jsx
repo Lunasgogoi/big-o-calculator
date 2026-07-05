@@ -5,20 +5,12 @@ import CodeExample from '../components/CodeExample';
 import ResultPanel from '../components/ResultPanel';
 import CodeEditor from '../components/CodeEditor';
 import toast from 'react-hot-toast';
-import type { AnalysisResult } from '../components/ResultPanel';
 
-interface HomeProps {
-  code: string;
-  setCode: (code: string) => void;
-  language: string;
-  setLanguage: (lang: string) => void;
-}
-
-export default function Home({ code, setCode, language, setLanguage }: HomeProps) {
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+export default function Home({ code, setCode, language, setLanguage }) {
+  const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCodeChange = (nextCode: string) => {
+  const handleCodeChange = (nextCode) => {
     setCode(nextCode);
   };
 
@@ -40,7 +32,7 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         body: JSON.stringify({ code: code, language: language }), 
       });
 
-      const data = (await response.json()) as Partial<AnalysisResult> & { detail?: string };
+      const data = await response.json();
 
       if (!response.ok) {
         if (response.status === 429) { 
@@ -49,10 +41,10 @@ export default function Home({ code, setCode, language, setLanguage }: HomeProps
         throw new Error(data.detail || "Failed to analyze code.");
       }
 
-      setResult(data as AnalysisResult); 
+      setResult(data); 
       toast.success("Analysis complete!");
 
-    } catch (err: unknown) {
+    } catch (err) {
       console.error(err);
       const message = err instanceof Error ? err.message : "An unexpected error occurred. Is the server running?";
       toast.error(message);

@@ -1,15 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
-import type { Dispatch, SetStateAction } from 'react';
 
-interface NavbarProps {
-  isDarkMode: boolean;
-  setIsDarkMode: Dispatch<SetStateAction<boolean>>;
-  setCode: (code: string) => void;
-  setLanguage: (language: string) => void;
-}
-
-export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage }: NavbarProps) {
-  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+export default function Navbar({ isDarkMode, setIsDarkMode, setCode, setLanguage }) {
+  const navLinkClass = ({ isActive }) =>
     [
       'rounded-lg px-3 py-2 font-medium transition-colors',
       isActive

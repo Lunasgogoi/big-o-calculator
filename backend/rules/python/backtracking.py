@@ -20,6 +20,26 @@ def detect_backtrack_signatures(node, code_bytes, found_keywords):
     for child in node.children:
         detect_backtrack_signatures(child, code_bytes, found_keywords)
 
+
+def detect_recursive_call(node, code_bytes, active_functions=None):
+    active_functions = active_functions or []
+
+    if node.type == 'function_definition':
+        name_node = node.child_by_field_name('name')
+        if name_node:
+            function_name = code_bytes[name_node.start_byte:name_node.end_byte].decode('utf8')
+            active_functions = active_functions + [function_name]
+
+    if node.type == 'call':
+        func_node = node.child_by_field_name('function')
+        if func_node:
+            called_name = code_bytes[func_node.start_byte:func_node.end_byte].decode('utf8')
+            if called_name in active_functions:
+                return True
+
+    return any(detect_recursive_call(child, code_bytes, active_functions) for child in node.children)
+
+
 def analyze_backtracking(root_node, raw_code):
     """Detects Permutations O(n!) and Subsets/Combinations O(2^n)."""
     code_bytes = bytes(raw_code, "utf8")
@@ -33,8 +53,12 @@ def analyze_backtracking(root_node, raw_code):
     if 'permute' in raw_lower or 'queen' in raw_lower:
         return {"time_complexity": "O(n!)", "space_complexity": "O(n)"}
 
-    # 2. Did we find standard Backtracking or Subsets?
-    if 'backtrack_context' in found_keywords or ('state_reversal' in found_keywords and 'append' in raw_lower):
+    has_recursive_context = detect_recursive_call(root_node, code_bytes)
+
+    # 2. Did we find standard recursive Backtracking or Subsets?
+    if 'backtrack_context' in found_keywords or (
+        has_recursive_context and 'state_reversal' in found_keywords and 'append' in raw_lower
+    ):
         return {"time_complexity": "O(2^n)", "space_complexity": "O(n)"}
 
     return None

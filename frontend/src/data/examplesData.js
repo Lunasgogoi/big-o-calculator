@@ -1,44 +1,6 @@
-// src/data/examplesData.ts
+// src/data/examplesData.js
 
-export interface Badge {
-  label: string;
-  value: string;
-  color: 'green' | 'orange' | 'red' | 'blue';
-}
-
-export interface AlgorithmExample {
-  id: string;
-  title: string;
-  badges: Badge[];
-  description?: string;
-  code: string;
-  analysis: string;
-  useCase?: string;
-}
-
-export interface OperationRow {
-  operation: string;
-  time: string;
-  color: 'green' | 'orange' | 'red' | 'blue';
-  worstTime?: string;
-  worstColor?: 'green' | 'orange' | 'red' | 'blue';
-  description: string;
-}
-
-export interface OperationTable {
-  title: string;
-  hasWorstCase?: boolean;
-  rows: OperationRow[];
-  note?: string;
-}
-
-export interface ExampleCategory {
-  categoryName: string;
-  examples?: AlgorithmExample[];
-  tables?: OperationTable[];
-}
-
-export const examplesData: ExampleCategory[] = [
+export const examplesData = [
   {
     categoryName: "Searching Algorithms",
     examples: [

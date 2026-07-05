@@ -1,4 +1,4 @@
-// src/pages/FAQ.tsx
+// src/pages/FAQ.jsx
 // import React from 'react';
 import { Link } from 'react-router-dom';
 import { faqData } from '../data/faqData';

@@ -1,42 +1,15 @@
-type ConfidenceLabel = 'high' | 'medium' | 'low';
-
-interface MatchedRule {
-  rule_name: string;
-  time_complexity: string;
-  space_complexity: string;
-  confidence: number;
-  confidence_label: ConfidenceLabel;
-  evidence: string[];
-}
-
-export interface AnalysisResult {
-  status: string;
-  time_complexity: string;
-  space_complexity: string;
-  confidence?: number;
-  confidence_label?: ConfidenceLabel;
-  dominant_rule?: string;
-  matched_rules?: MatchedRule[];
-  analysis_steps?: string[];
-  ai_suggestion: string;
-}
-
-interface ResultPanelProps {
-  result: AnalysisResult;
-}
-
-const confidenceStyles: Record<ConfidenceLabel, string> = {
+const confidenceStyles = {
   high: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
   medium: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
   low: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
 };
 
-function formatRuleName(ruleName?: string) {
+function formatRuleName(ruleName) {
   if (!ruleName) return 'Unknown rule';
   return ruleName.replace(/_/g, ' ');
 }
 
-export default function ResultPanel({ result }: ResultPanelProps) {
+export default function ResultPanel({ result }) {
   const confidenceLabel = result.confidence_label ?? 'medium';
   const confidenceText = typeof result.confidence === 'number'
     ? `${Math.round(result.confidence * 100)}%`
